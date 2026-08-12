@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+venv/
+
+# Django
+db.sqlite3
+media/
+
+# Sphinx build output
+docs/_build/
+
+# Editor
+.idea/
+.vscode/
+
+# Reference project kept locally only, not part of our submission
+covid-19_help_service_application-master/
+
+# Personal study notes, kept on this computer only
+notes/
