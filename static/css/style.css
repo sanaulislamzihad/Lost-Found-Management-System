@@ -1,0 +1,9 @@
+/* Small style additions on top of Bootstrap. */
+
+body {
+    min-height: 100vh;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
