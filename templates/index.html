@@ -35,10 +35,16 @@
             </div>
             <div class="row mt-2 text-center">
                 <div class="col-6">
-                    <div class="border rounded py-2">Items posted</div>
+                    <div class="border rounded py-2">
+                        <strong>{{ total_posted }}</strong><br>
+                        Items posted
+                    </div>
                 </div>
                 <div class="col-6">
-                    <div class="border rounded py-2">Returned</div>
+                    <div class="border rounded py-2">
+                        <strong>{{ total_returned }}</strong><br>
+                        Returned
+                    </div>
                 </div>
             </div>
         </div>
@@ -70,10 +76,31 @@
     </div>
 </div>
 
-<!-- Recently found items. The list will be added with the found item app. -->
+<!-- Recently found items, newest first. -->
 <div class="container mt-5">
     <h3>Recently found on campus</h3>
-    <p class="text-muted">No items have been posted yet.</p>
+    <div class="row mt-3">
+        {% for item in recent_found %}
+        <div class="col-md-3">
+            <div class="border rounded p-2 h-100">
+                {% if item.image %}
+                <img src="{{ item.image.url }}" class="img-fluid rounded"
+                     alt="{{ item.item_name }}">
+                {% else %}
+                <div class="border rounded py-4 text-center text-muted">
+                    No photo
+                </div>
+                {% endif %}
+                <p class="mt-2 mb-0"><strong>{{ item.item_name }}</strong></p>
+                <p class="mb-0 text-muted">{{ item.location }}</p>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col">
+            <p class="text-muted">No items have been posted yet.</p>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock body %}
