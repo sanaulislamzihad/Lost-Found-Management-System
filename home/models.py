@@ -26,6 +26,13 @@ CLAIM_STATUS_CHOICES = [
     ('rejected', 'Rejected'),
 ]
 
+ROLE_CHOICES = [
+    ('student', 'Student'),
+    ('staff', 'Staff'),
+    ('officer', 'Security Officer'),
+    ('admin', 'Admin'),
+]
+
 
 class Category(models.Model):
     """A group that an item belongs to, for example Electronics or Bags.
@@ -253,3 +260,45 @@ class Notification(models.Model):
         :rtype: Notification.
         """
         return Notification.objects.create(user=user, message=message)
+
+
+class Profile(models.Model):
+    """The extra details of a user that Django does not store by itself.
+
+    Django's own User table keeps the name, email and password. The SRS
+    also asks for a university ID, a phone number, a photo and a role,
+    so those four are kept here and joined to the user one to one.
+    """
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='profile',
+    )
+    university_id = models.CharField(max_length=20, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    photo = models.ImageField(upload_to='profiles', blank=True, null=True)
+    role = models.CharField(
+        max_length=10,
+        choices=ROLE_CHOICES,
+        default='student',
+    )
+
+    def __str__(self):
+        """Return the text shown for this profile in the admin site.
+
+        :return: the username followed by the role.
+        :rtype: str.
+        """
+        return '%s (%s)' % (self.user.username, self.get_role_display())
+
+    def is_officer(self):
+        """Tell whether this user is allowed to decide on claims.
+
+        Feature 7 checks this before showing the verification page, so
+        the rule is written once here instead of in every view.
+
+        :return: True for a Security Officer.
+        :rtype: bool.
+        """
+        return self.role == 'officer'
