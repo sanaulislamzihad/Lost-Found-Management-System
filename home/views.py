@@ -34,3 +34,17 @@ def index(request):
         'recent_found': recent_found,
     }
     return render(request, 'index.html', context)
+
+
+def register(request):
+    """Show the registration form.
+
+    The SRS asks for four fields: full name, university or employee ID,
+    email and password. Saving the account is added in the next step.
+
+    :param request: the HTTP request sent by the visitor.
+    :type request: HttpRequest.
+    :return: the rendered registration page.
+    :rtype: HttpResponse.
+    """
+    return render(request, 'register.html')
