@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.shortcuts import redirect, render
 
-from .models import Item
+from .models import Item, Profile
 
 RECENT_ITEM_LIMIT = 4
 
@@ -69,6 +69,10 @@ def register(request):
 
     if User.objects.filter(email=email).exists():
         messages.error(request, 'This email is already registered.')
+        return render(request, 'register.html')
+
+    if Profile.objects.filter(university_id=university_id).exists():
+        messages.error(request, 'This ID is already registered.')
         return render(request, 'register.html')
 
     user = User.objects.create_user(
