@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<!-- Top part: search box and the two report buttons -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-7">
+            <h2>Lost something on campus?</h2>
+            <p>Search the posts first. Your item may already be found.</p>
+
+            <form class="row g-2" method="get" action="#">
+                <div class="col-8">
+                    <input type="text" class="form-control" name="query"
+                           placeholder="Search by item name, category or place">
+                </div>
+                <div class="col-4">
+                    <button class="btn btn-primary w-100" type="submit">
+                        Search
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-3">
+                <a class="btn btn-outline-dark" href="#">Report a lost item</a>
+                <a class="btn btn-outline-dark" href="#">I found something</a>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="border rounded p-5 text-center text-muted">
+                Image
+            </div>
+            <div class="row mt-2 text-center">
+                <div class="col-6">
+                    <div class="border rounded py-2">Items posted</div>
+                </div>
+                <div class="col-6">
+                    <div class="border rounded py-2">Returned</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How it works -->
+<div class="container mt-5">
+    <h3>How it works</h3>
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <div class="border rounded p-3 h-100">
+                <h5>Post it</h5>
+                <p>Report the item you lost, or the item you found.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="border rounded p-3 h-100">
+                <h5>We match it</h5>
+                <p>Search the posts and claim the item that is yours.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="border rounded p-3 h-100">
+                <h5>Security verifies</h5>
+                <p>A Security Officer checks the claim before handover.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recently found items. The list will be added with the found item app. -->
+<div class="container mt-5">
+    <h3>Recently found on campus</h3>
+    <p class="text-muted">No items have been posted yet.</p>
+</div>
+
+{% endblock body %}
