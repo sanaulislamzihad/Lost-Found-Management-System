@@ -95,4 +95,17 @@ def register(request):
     user.profile.save()
 
     messages.info(request, 'Registration successful. You can log in now.')
-    return redirect('index')
+    return redirect('login')
+
+
+def login(request):
+    """Show the login form.
+
+    Checking the email and the password is added in the next step.
+
+    :param request: the HTTP request sent by the visitor.
+    :type request: HttpRequest.
+    :return: the rendered login page.
+    :rtype: HttpResponse.
+    """
+    return render(request, 'login.html')
