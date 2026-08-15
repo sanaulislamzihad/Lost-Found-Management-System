@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Holds every database table of the system. The feature apps below
+    # import their models from here, so the whole team works on one set
+    # of tables instead of each app making its own copy.
+    "core.apps.CoreConfig",
     "home.apps.HomeConfig",
 ]
 
