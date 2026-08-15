@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     # import their models from here, so the whole team works on one set
     # of tables instead of each app making its own copy.
     "core.apps.CoreConfig",
+    # One app for each feature of the SRS, so that two members never
+    # have to write inside the same file.
     "home.apps.HomeConfig",
+    "register.apps.RegisterConfig",
 ]
 
 MIDDLEWARE = [
