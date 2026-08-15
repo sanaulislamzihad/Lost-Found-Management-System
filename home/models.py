@@ -284,6 +284,11 @@ class Profile(models.Model):
         default='student',
     )
 
+    # Used by the login view to lock an account for a while after too
+    # many wrong tries, which the SRS asks for in Feature 2.
+    failed_login_attempts = models.PositiveIntegerField(default=0)
+    locked_until = models.DateTimeField(blank=True, null=True)
+
     def __str__(self):
         """Return the text shown for this profile in the admin site.
 
