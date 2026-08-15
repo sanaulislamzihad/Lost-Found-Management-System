@@ -1,23 +1,19 @@
-"""
-URL configuration for lost_and_found project.
+"""URL configuration for the lost_and_found project.
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+Every feature of the system has its own app, and each app keeps its own
+urls.py file. This file only collects them together and gives each app a
+prefix, so two members can add their URLs without touching the same lines.
 """
 
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path('', include('home.urls')),
+    path('admin/', admin.site.urls),
 ]
+
+# During development Django serves the uploaded item photos itself.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
