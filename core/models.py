@@ -211,3 +211,53 @@ class Claim(models.Model):
         self.reviewed_by = officer
         self.remark = remark
         self.save()
+
+
+class Notification(models.Model):
+    """One message shown to a user inside the notification panel.
+
+    Feature 8 writes a row here whenever a claim is decided, a new
+    matching item is posted, or somebody claims a found item.
+    """
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='notifications',
+    )
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        """Return the text shown for this notification in the admin site.
+
+        :return: the owner of the message and the message itself.
+        :rtype: str.
+        """
+        return '%s: %s' % (self.user.username, self.message)
+
+    def mark_as_read(self):
+        """Mark the message as seen so it stops showing as new."""
+        self.is_read = True
+        self.save()
+
+    @staticmethod
+    def send(user, message):
+        """Create a notification for one user.
+
+        Every feature calls this one method instead of writing its own
+        ``Notification.objects.create(...)`` line, so the way we notify
+        people stays in a single place.
+
+        :param user: who should receive the message.
+        :type user: User.
+        :param message: the text to show.
+        :type message: str.
+        :return: the notification that was saved.
+        :rtype: Notification.
+        """
+        return Notification.objects.create(user=user, message=message)
