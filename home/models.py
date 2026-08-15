@@ -5,8 +5,16 @@ file. Every other app imports the models from here, so the whole team
 works on the same tables instead of making their own copies.
 """
 
+from datetime import timedelta
+
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
+
+# How many wrong logins in a row are allowed, and how long the account
+# stays shut after that. The SRS only says "many" and "some time".
+MAX_LOGIN_ATTEMPTS = 5
+LOCK_MINUTES = 15
 
 ITEM_TYPE_CHOICES = [
     ('lost', 'Lost'),
@@ -307,3 +315,36 @@ class Profile(models.Model):
         :rtype: bool.
         """
         return self.role == 'officer'
+
+    def is_locked(self):
+        """Tell whether the account is shut because of wrong logins.
+
+        :return: True while the lock time has not passed yet.
+        :rtype: bool.
+        """
+        if self.locked_until is None:
+            return False
+        return self.locked_until > timezone.now()
+
+    def note_failed_login(self):
+        """Count one wrong login and lock the account if there are too
+        many in a row.
+
+        The counter starts again after the account is locked, so the
+        next lock also needs a fresh set of wrong tries.
+        """
+        self.failed_login_attempts += 1
+
+        if self.failed_login_attempts >= MAX_LOGIN_ATTEMPTS:
+            self.locked_until = timezone.now() + timedelta(
+                minutes=LOCK_MINUTES,
+            )
+            self.failed_login_attempts = 0
+
+        self.save()
+
+    def note_successful_login(self):
+        """Clear the counter and the lock after the member gets in."""
+        self.failed_login_attempts = 0
+        self.locked_until = None
+        self.save()

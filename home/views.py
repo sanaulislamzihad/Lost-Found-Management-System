@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.shortcuts import redirect, render
 
-from .models import Item, Profile
+from .models import LOCK_MINUTES, Item, Profile
 
 RECENT_ITEM_LIMIT = 4
 
@@ -118,12 +118,27 @@ def login(request):
     email = request.POST['email']
     password = request.POST['password']
 
+    # The email is also the username, so the profile can be found even
+    # before the password is checked.
+    profile = Profile.objects.filter(user__username=email).first()
+
+    if profile is not None and profile.is_locked():
+        messages.error(
+            request,
+            'Too many wrong tries. Please try again after %s minutes.'
+            % LOCK_MINUTES,
+        )
+        return render(request, 'login.html')
+
     user = auth.authenticate(request, username=email, password=password)
     if user is None:
+        if profile is not None:
+            profile.note_failed_login()
         # One message for both cases on purpose. Saying which half was
         # wrong would tell a stranger that the email exists.
         messages.error(request, 'Wrong email or password.')
         return render(request, 'login.html')
 
+    profile.note_successful_login()
     auth.login(request, user)
     return redirect('index')
