@@ -120,6 +120,9 @@ def login(request):
 
     user = auth.authenticate(request, username=email, password=password)
     if user is None:
+        # One message for both cases on purpose. Saying which half was
+        # wrong would tell a stranger that the email exists.
+        messages.error(request, 'Wrong email or password.')
         return render(request, 'login.html')
 
     auth.login(request, user)
