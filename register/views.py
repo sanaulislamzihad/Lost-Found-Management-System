@@ -7,6 +7,8 @@ password.
 
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.shortcuts import redirect, render
 
 
@@ -30,6 +32,16 @@ def register(request):
     university_id = request.POST['university_id']
     email = request.POST['email']
     password = request.POST['password']
+
+    try:
+        validate_email(email)
+    except ValidationError:
+        messages.error(request, 'Please enter a valid email address.')
+        return render(request, 'register.html')
+
+    if User.objects.filter(email=email).exists():
+        messages.error(request, 'This email is already registered.')
+        return render(request, 'register.html')
 
     # create_user hashes the password before it is written, so the
     # plain text never reaches the database.
