@@ -4,7 +4,7 @@ This app holds the landing page of the site and, later on, the
 registration and login pages.
 """
 
-from django.contrib import messages
+from django.contrib import auth, messages
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -99,13 +99,28 @@ def register(request):
 
 
 def login(request):
-    """Show the login form.
+    """Show the login form and start the session.
 
-    Checking the email and the password is added in the next step.
+    The email works as the username because registration saves it in
+    both fields, so Django's own authenticate call is enough here.
+
+    Django's login function has the same name as this view, so the
+    module is imported as ``auth`` and used as ``auth.login``.
 
     :param request: the HTTP request sent by the visitor.
     :type request: HttpRequest.
-    :return: the rendered login page.
+    :return: the login page, or the home page once the member is in.
     :rtype: HttpResponse.
     """
-    return render(request, 'login.html')
+    if request.method != 'POST':
+        return render(request, 'login.html')
+
+    email = request.POST['email']
+    password = request.POST['password']
+
+    user = auth.authenticate(request, username=email, password=password)
+    if user is None:
+        return render(request, 'login.html')
+
+    auth.login(request, user)
+    return redirect('index')
