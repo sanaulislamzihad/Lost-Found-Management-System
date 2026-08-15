@@ -7,6 +7,7 @@ password.
 
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.shortcuts import redirect, render
@@ -39,6 +40,13 @@ def register(request):
         validate_email(email)
     except ValidationError:
         messages.error(request, 'Please enter a valid email address.')
+        return render(request, 'register.html')
+
+    try:
+        validate_password(password)
+    except ValidationError as error:
+        for text in error.messages:
+            messages.error(request, text)
         return render(request, 'register.html')
 
     if User.objects.filter(email=email).exists():
