@@ -11,6 +11,8 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.shortcuts import redirect, render
 
+from core.models import Profile
+
 
 def register(request):
     """Show the registration form and create the account.
@@ -41,6 +43,10 @@ def register(request):
 
     if User.objects.filter(email=email).exists():
         messages.error(request, 'This email is already registered.')
+        return render(request, 'register.html')
+
+    if Profile.objects.filter(university_id=university_id).exists():
+        messages.error(request, 'This ID is already registered.')
         return render(request, 'register.html')
 
     # create_user hashes the password before it is written, so the
