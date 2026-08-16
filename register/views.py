@@ -31,10 +31,24 @@ def register(request):
     if request.method != 'POST':
         return render(request, 'register.html')
 
-    full_name = request.POST['full_name']
-    university_id = request.POST['university_id']
-    email = request.POST['email']
-    password = request.POST['password']
+    # .get() is used instead of [...] so that a request which leaves a
+    # field out altogether shows the form again instead of crashing.
+    full_name = request.POST.get('full_name', '').strip()
+    university_id = request.POST.get('university_id', '').strip()
+    email = request.POST.get('email', '').strip()
+    password = request.POST.get('password', '')
+
+    # The template marks every box required, but that only stops an
+    # honest browser. The same four fields are checked again here,
+    # because the SRS asks for all four and a request can be sent
+    # without the form.
+    if not full_name:
+        messages.error(request, 'Please write your full name.')
+        return render(request, 'register.html')
+
+    if not university_id:
+        messages.error(request, 'Please write your university or employee ID.')
+        return render(request, 'register.html')
 
     try:
         validate_email(email)
