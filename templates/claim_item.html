@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Claim {{ item.item_name }} - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <a class="back-link" href="{% url 'item_detail' item.pk %}">
+                &lsaquo; Back to the post
+            </a>
+
+            <div class="form-card">
+                <h3 class="mb-1">Claim this item</h3>
+                <p class="form-lead">
+                    A Security Officer reads every claim before the item
+                    is handed over, so write whatever proves the item is
+                    really yours.
+                </p>
+
+                <!-- What is being claimed, so nobody sends a claim on
+                     the wrong post by mistake. -->
+                <div class="claim-item-box">
+                    {% if item.image %}
+                    <img class="claim-item-thumb" src="{{ item.image.url }}"
+                         alt="{{ item.item_name }}">
+                    {% else %}
+                    <span class="claim-item-thumb claim-item-thumb-empty">
+                        No photo
+                    </span>
+                    {% endif %}
+
+                    <span class="claim-item-body">
+                        <span class="claim-item-title">{{ item.item_name }}</span>
+                        <span class="claim-item-meta">
+                            {{ item.category.name }}
+                            &middot; found at {{ item.location }}
+                            &middot; {{ item.date|date:"d M Y" }}
+                        </span>
+                    </span>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="proof" class="form-label">
+                            Your proof of ownership
+                        </label>
+                        <textarea class="form-control" id="proof" name="proof"
+                                  rows="6" required
+                                  placeholder="A mark or a scratch only the owner would know about, what is inside it, a purchase receipt, or an ID that matches.">{{ proof }}</textarea>
+                        <div class="form-text">
+                            Only the Security Officer and the finder see
+                            this. Be as exact as you can.
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary" type="submit">
+                            Send the claim
+                        </button>
+                        <a class="btn btn-link"
+                           href="{% url 'item_detail' item.pk %}">Cancel</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

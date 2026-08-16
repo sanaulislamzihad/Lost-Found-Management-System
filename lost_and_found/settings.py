@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     "login_logout.apps.LoginLogoutConfig",
     "report_found_item.apps.ReportFoundItemConfig",
     "search_items.apps.SearchItemsConfig",
+    "claim_item.apps.ClaimItemConfig",
+    "notifications.apps.NotificationsConfig",
 ]
 
 MIDDLEWARE = [
@@ -74,6 +76,10 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                # Puts the number of unread messages of the member into
+                # every template, so the bell in the navigation bar can
+                # show it on every page.
+                "notifications.context_processors.unread_notifications",
             ],
         },
     },

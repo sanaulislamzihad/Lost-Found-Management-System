@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}My claims - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+    <div class="page-head">
+        <div>
+            <h2>My claims</h2>
+            <p>Every item you have said is yours, and what happened to it.</p>
+        </div>
+        <a class="btn btn-outline-dark" href="{% url 'item_list' %}">
+            Browse the posts
+        </a>
+    </div>
+
+    {% for claim in claims %}
+    <div class="claim-card">
+        <div class="claim-card-head">
+            <a class="claim-card-title"
+               href="{% url 'item_detail' claim.item.pk %}">
+                {{ claim.item.item_name }}
+            </a>
+            <span class="badge-claim-{{ claim.status }}">
+                {{ claim.get_status_display }}
+            </span>
+        </div>
+
+        <p class="claim-card-meta">
+            {{ claim.item.category.name }}
+            &middot; found at {{ claim.item.location }}
+            &middot; claimed on {{ claim.created_at|date:"d M Y" }}
+        </p>
+
+        <dl class="claim-card-detail">
+            <dt>Proof you gave</dt>
+            <dd>{{ claim.proof }}</dd>
+
+            {% if claim.remark %}
+            <dt>Remark from the officer</dt>
+            <dd>{{ claim.remark }}</dd>
+            {% endif %}
+        </dl>
+
+        {% if claim.status == 'pending' %}
+        <p class="claim-card-note">
+            Waiting for a Security Officer to check it.
+        </p>
+        {% elif claim.status == 'approved' %}
+        <p class="claim-card-note claim-card-note-good">
+            Approved. Please collect the item from the security office.
+        </p>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <p class="mb-1"><strong>You have not claimed anything yet</strong></p>
+        <p class="text-muted mb-3">
+            Find your item in the posts and press
+            &ldquo;This is mine&rdquo; on it.
+        </p>
+        <a class="btn btn-outline-dark btn-sm" href="{% url 'item_list' %}">
+            Browse the posts
+        </a>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock body %}

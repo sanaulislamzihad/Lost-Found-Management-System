@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_date
 
 from core.models import Category, Item
+from notifications.services import notify_matching_lost_posters
 
 
 def read_date(text):
@@ -177,6 +178,10 @@ def report_found_item(request):
         image=request.FILES.get('image'),
         **clean,
     )
+
+    # Feature 8: everybody who lost something of this kind and is still
+    # waiting for it hears that one has turned up.
+    notify_matching_lost_posters(item)
 
     messages.info(request, 'Thank you. Your found item post is live now.')
     return redirect('item_detail', pk=item.pk)
