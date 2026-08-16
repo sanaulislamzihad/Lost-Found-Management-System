@@ -4,71 +4,80 @@
 
 {% block body %}
 
-<!-- Top part: search box and the two report buttons -->
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-7">
-            <h2>Lost something on campus?</h2>
-            <p>Search the posts first. Your item may already be found.</p>
+<!-- Top part: search box, the two report buttons and the counts. -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center gy-4">
+            <div class="col-lg-7">
+                <span class="hero-eyebrow">North South University</span>
 
-            <form class="row g-2" method="get" action="#">
-                <div class="col-8">
+                <h1>Lost something on campus?</h1>
+                <p class="hero-text">
+                    Search the posts first. Your item may already be
+                    sitting with the person who picked it up.
+                </p>
+
+                <form class="hero-search" method="get"
+                      action="{% url 'item_list' %}">
                     <input type="text" class="form-control" name="query"
+                           aria-label="Search the posts"
                            placeholder="Search by item name, category or place">
-                </div>
-                <div class="col-4">
-                    <button class="btn btn-primary w-100" type="submit">
+                    <button class="btn btn-primary" type="submit">
                         Search
                     </button>
+                </form>
+
+                <div class="hero-actions">
+                    <a class="btn btn-outline-light" href="#">
+                        Report a lost item
+                    </a>
+                    <a class="btn btn-outline-light"
+                       href="{% url 'report_found_item' %}">
+                        I found something
+                    </a>
                 </div>
-            </form>
-
-            <div class="mt-3">
-                <a class="btn btn-outline-dark" href="#">Report a lost item</a>
-                <a class="btn btn-outline-dark" href="#">I found something</a>
             </div>
-        </div>
 
-        <div class="col-md-5">
-            <div class="border rounded p-5 text-center text-muted">
-                Image
-            </div>
-            <div class="row mt-2 text-center">
-                <div class="col-6">
-                    <div class="border rounded py-2">
-                        <strong>{{ total_posted }}</strong><br>
-                        Items posted
+            <div class="col-lg-5">
+                <div class="stat-panel">
+                    <div class="stat-tile">
+                        <span class="stat-number">{{ total_posted }}</span>
+                        <span class="stat-label">Items posted</span>
                     </div>
-                </div>
-                <div class="col-6">
-                    <div class="border rounded py-2">
-                        <strong>{{ total_returned }}</strong><br>
-                        Returned
+                    <div class="stat-tile">
+                        <span class="stat-number">{{ total_returned }}</span>
+                        <span class="stat-label">Returned</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <!-- How it works -->
 <div class="container mt-5">
-    <h3>How it works</h3>
-    <div class="row mt-3">
+    <div class="section-head">
+        <h3>How it works</h3>
+    </div>
+
+    <div class="row g-3">
         <div class="col-md-4">
-            <div class="border rounded p-3 h-100">
+            <div class="step-card">
+                <span class="step-number">1</span>
                 <h5>Post it</h5>
                 <p>Report the item you lost, or the item you found.</p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="border rounded p-3 h-100">
+            <div class="step-card">
+                <span class="step-number">2</span>
                 <h5>We match it</h5>
                 <p>Search the posts and claim the item that is yours.</p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="border rounded p-3 h-100">
+            <div class="step-card">
+                <span class="step-number">3</span>
                 <h5>Security verifies</h5>
                 <p>A Security Officer checks the claim before handover.</p>
             </div>
@@ -78,26 +87,36 @@
 
 <!-- Recently found items, newest first. -->
 <div class="container mt-5">
-    <h3>Recently found on campus</h3>
-    <div class="row mt-3">
+    <div class="section-head">
+        <h3>Recently found on campus</h3>
+        <a href="{% url 'item_list' %}?type=found">See every found item &rsaquo;</a>
+    </div>
+
+    <div class="row g-3">
         {% for item in recent_found %}
-        <div class="col-md-3">
-            <div class="border rounded p-2 h-100">
+        <div class="col-sm-6 col-lg-3">
+            <a class="recent-card" href="{% url 'item_detail' item.pk %}">
                 {% if item.image %}
-                <img src="{{ item.image.url }}" class="img-fluid rounded"
+                <img class="recent-photo" src="{{ item.image.url }}"
                      alt="{{ item.item_name }}">
                 {% else %}
-                <div class="border rounded py-4 text-center text-muted">
-                    No photo
-                </div>
+                <span class="recent-photo recent-photo-empty">No photo</span>
                 {% endif %}
-                <p class="mt-2 mb-0"><strong>{{ item.item_name }}</strong></p>
-                <p class="mb-0 text-muted">{{ item.location }}</p>
-            </div>
+
+                <span class="recent-body">
+                    <span class="recent-name">{{ item.item_name }}</span>
+                    <span class="recent-place">{{ item.location }}</span>
+                </span>
+            </a>
         </div>
         {% empty %}
         <div class="col">
-            <p class="text-muted">No items have been posted yet.</p>
+            <div class="empty-state">
+                <p class="mb-1"><strong>Nothing has been posted yet</strong></p>
+                <p class="text-muted mb-0">
+                    The newest found items will show up here.
+                </p>
+            </div>
         </div>
         {% endfor %}
     </div>

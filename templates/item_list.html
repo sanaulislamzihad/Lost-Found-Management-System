@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse items - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+    <div class="page-head">
+        <div>
+            <h2>Browse the posts</h2>
+            <p>Search every lost and found post, then narrow the list down.</p>
+        </div>
+        <a class="btn btn-primary" href="{% url 'report_found_item' %}">
+            + Report a found item
+        </a>
+    </div>
+
+    <!-- Feature 5: one form carries the keyword and every filter, so
+         the two work together in the same request. -->
+    <form class="filter-card" method="get" action="{% url 'item_list' %}">
+        <div class="row g-3">
+            <div class="col-lg-5">
+                <label for="query" class="form-label">Search</label>
+                <input type="text" class="form-control" id="query" name="query"
+                       value="{{ filters.query }}"
+                       placeholder="Item name, category or any word">
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <label for="category" class="form-label">Category</label>
+                <select class="form-select" id="category" name="category">
+                    <option value="">All categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category.pk }}"
+                            {% if filters.category == category.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-sm-6 col-lg-4">
+                <label for="location" class="form-label">Place</label>
+                <input type="text" class="form-control" id="location"
+                       name="location" value="{{ filters.location }}"
+                       placeholder="Library, cafeteria, bus stop...">
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <label for="date_from" class="form-label">Date from</label>
+                <input type="date" class="form-control" id="date_from"
+                       name="date_from" value="{{ filters.date_from }}">
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+                <label for="date_to" class="form-label">Date to</label>
+                <input type="date" class="form-control" id="date_to"
+                       name="date_to" value="{{ filters.date_to }}">
+            </div>
+
+            <div class="col-lg-6 d-flex align-items-end">
+                <div class="filter-actions">
+                    <!-- Radio buttons instead of one more dropdown, so
+                         the three choices are visible at a glance. -->
+                    <div class="btn-group" role="group" aria-label="Item type">
+                        <input type="radio" class="btn-check" name="type"
+                               id="type-all" value=""
+                               {% if not filters.type %}checked{% endif %}>
+                        <label class="btn btn-outline-dark" for="type-all">
+                            All
+                        </label>
+
+                        {% for value, label in item_types %}
+                        <input type="radio" class="btn-check" name="type"
+                               id="type-{{ value }}" value="{{ value }}"
+                               {% if filters.type == value %}checked{% endif %}>
+                        <label class="btn btn-outline-dark" for="type-{{ value }}">
+                            {{ label }}
+                        </label>
+                        {% endfor %}
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">
+                        Apply
+                    </button>
+
+                    {% if is_filtered %}
+                    <a class="btn btn-link px-1" href="{% url 'item_list' %}">
+                        Clear all
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <p class="result-count">
+        {{ items|length }} post{{ items|length|pluralize }} found
+    </p>
+
+    <!-- Feature 5: the whole row is a link, so a post opens with one
+         click anywhere on it. -->
+    {% for item in items %}
+    <a class="item-card" href="{% url 'item_detail' item.pk %}">
+        {% if item.image %}
+        <img class="item-thumb" src="{{ item.image.url }}"
+             alt="{{ item.item_name }}">
+        {% else %}
+        <span class="item-thumb item-thumb-empty">No photo</span>
+        {% endif %}
+
+        <span class="item-card-body">
+            <span class="item-card-head">
+                <span class="item-card-title">{{ item.item_name }}</span>
+                <span class="badge badge-status-{{ item.status }}">
+                    {{ item.get_status_display }}
+                </span>
+            </span>
+
+            <span class="item-card-meta">
+                <span class="badge badge-type-{{ item.item_type }}">
+                    {{ item.get_item_type_display }}
+                </span>
+                {{ item.category.name }}
+                &middot; {{ item.location }}
+                &middot; {{ item.date|date:"d M Y" }}
+            </span>
+
+            <span class="item-card-text">
+                {{ item.description|truncatewords:22 }}
+            </span>
+        </span>
+
+        <span class="item-card-arrow" aria-hidden="true">&rsaquo;</span>
+    </a>
+    {% empty %}
+    <div class="empty-state">
+        <p class="mb-1"><strong>No results found</strong></p>
+        <p class="text-muted mb-3">
+            Nothing matches what you asked for. Try a shorter word, or
+            widen the dates.
+        </p>
+        {% if is_filtered %}
+        <a class="btn btn-outline-dark btn-sm" href="{% url 'item_list' %}">
+            Clear all filters
+        </a>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock body %}

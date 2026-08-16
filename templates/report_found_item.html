@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ heading }} - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="form-card">
+                <h3 class="mb-1">{{ heading }}</h3>
+                <p class="form-lead">
+                    Write down everything you remember. The more you put
+                    here, the easier it is for the owner to recognise it.
+                </p>
+
+                <!-- enctype is needed, otherwise the browser sends only
+                     the name of the photo file and not the file. -->
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="item_name" class="form-label">
+                            What did you find?
+                        </label>
+                        <input type="text" class="form-control" id="item_name"
+                               name="item_name" value="{{ form.item_name }}"
+                               placeholder="Black leather wallet" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category" class="form-label">
+                            Category
+                        </label>
+                        <select class="form-select" id="category"
+                                name="category" required>
+                            <option value="">Choose a category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.pk }}"
+                                    {% if form.category|stringformat:"s" == category.pk|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            Description
+                        </label>
+                        <textarea class="form-control" id="description"
+                                  name="description" rows="4"
+                                  placeholder="Colour, brand, marks, what was inside..."
+                                  required>{{ form.description }}</textarea>
+                        <div class="form-text">
+                            Please leave out anything only the real owner
+                            would know. A Security Officer will ask for it
+                            when somebody claims the item.
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-7 mb-3">
+                            <label for="location" class="form-label">
+                                Where did you find it?
+                            </label>
+                            <input type="text" class="form-control"
+                                   id="location" name="location"
+                                   value="{{ form.location }}"
+                                   placeholder="Central library, 2nd floor"
+                                   required>
+                        </div>
+
+                        <div class="col-md-5 mb-3">
+                            <label for="date" class="form-label">
+                                Date found
+                            </label>
+                            <input type="date" class="form-control" id="date"
+                                   name="date" value="{{ form.date }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image" class="form-label">
+                            Photo <span class="text-muted">(optional)</span>
+                        </label>
+                        <input type="file" class="form-control" id="image"
+                               name="image" accept="image/*">
+                        {% if item.image %}
+                        <div class="form-text">
+                            A photo is already on this post. Choosing a new
+                            file replaces it.
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn btn-primary" type="submit">
+                            {{ button }}
+                        </button>
+                        {% if item %}
+                        <a class="btn btn-link"
+                           href="{% url 'item_detail' item.pk %}">Cancel</a>
+                        {% else %}
+                        <a class="btn btn-link"
+                           href="{% url 'item_list' %}">Cancel</a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
