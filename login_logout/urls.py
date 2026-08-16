@@ -1,0 +1,9 @@
+"""URL patterns of the login_logout app."""
+
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path('login', views.login, name='login'),
+]

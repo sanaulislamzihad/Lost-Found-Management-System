@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # have to write inside the same file.
     "home.apps.HomeConfig",
     "register.apps.RegisterConfig",
+    "login_logout.apps.LoginLogoutConfig",
 ]
 
 MIDDLEWARE = [
