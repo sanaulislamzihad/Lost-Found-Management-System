@@ -9,7 +9,9 @@ and imported with ``from core.models import Item``.
 from datetime import timedelta
 
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 # How many wrong logins in a row are allowed, and how long the account
@@ -182,6 +184,17 @@ class Claim(models.Model):
             self.item.item_name,
         )
 
+    def get_absolute_url(self):
+        """Return the address of the post this claim was made on.
+
+        A notification about a claim points here, so the member can go
+        straight from the panel to the item instead of hunting for it.
+
+        :return: the path of the item detail page.
+        :rtype: str.
+        """
+        return reverse('item_detail', kwargs={'pk': self.item_id})
+
     def approve(self, officer):
         """Accept the claim and hand the item over to the claimant.
 
@@ -197,14 +210,33 @@ class Claim(models.Model):
 
         self.item.mark_as_claimed()
 
+        # Feature 8 asks the system to tell the claimant the decision.
+        Notification.send(
+            self.claimed_by,
+            'Your claim on "%s" was approved. Please collect the item '
+            'from the security office.' % self.item.item_name,
+            link=self.get_absolute_url(),
+        )
+
         other_claims = Claim.objects.filter(
             item=self.item,
             status='pending',
         ).exclude(pk=self.pk)
-        other_claims.update(
-            status='rejected',
-            remark='Another claim on this item was approved.',
-        )
+
+        # A single update() would be one query instead of this loop, but
+        # then the other claimants would never hear that their claim was
+        # closed. An item only ever has a handful of claims, so telling
+        # each person is worth the extra queries.
+        for claim in other_claims:
+            claim.status = 'rejected'
+            claim.remark = 'Another claim on this item was approved.'
+            claim.save()
+            Notification.send(
+                claim.claimed_by,
+                'Your claim on "%s" was closed because another claim on '
+                'the same item was approved.' % self.item.item_name,
+                link=claim.get_absolute_url(),
+            )
 
     def reject(self, officer, remark):
         """Turn the claim down with a reason written by the officer.
@@ -220,6 +252,14 @@ class Claim(models.Model):
         self.remark = remark
         self.save()
 
+        # Feature 8 asks the system to tell the claimant the decision.
+        Notification.send(
+            self.claimed_by,
+            'Your claim on "%s" was rejected. %s'
+            % (self.item.item_name, remark),
+            link=self.get_absolute_url(),
+        )
+
 
 class Notification(models.Model):
     """One message shown to a user inside the notification panel.
@@ -234,6 +274,11 @@ class Notification(models.Model):
         related_name='notifications',
     )
     message = models.CharField(max_length=255)
+    # Where the panel sends the member when they open the message, for
+    # example the page of the item the message is about. It is a plain
+    # path and not a foreign key, because a notification can point at
+    # an item, at a claim or at nothing at all.
+    link = models.CharField(max_length=200, blank=True)
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -253,22 +298,61 @@ class Notification(models.Model):
         self.is_read = True
         self.save()
 
+    def send_email_copy(self):
+        """Post the same message to the email address of the member.
+
+        Feature 8 lets a member ask for an email copy, so this only
+        writes to the people who turned the switch on.
+        """
+        profile = getattr(self.user, 'profile', None)
+
+        if profile is None or not profile.email_notifications:
+            return
+
+        if not self.user.email:
+            return
+
+        send_mail(
+            subject='Lost & Found notification',
+            message=self.message,
+            # None means the DEFAULT_FROM_EMAIL of the project.
+            from_email=None,
+            recipient_list=[self.user.email],
+            # A mail server that is not answering must not break the
+            # page that was only trying to tell somebody something. The
+            # message is already saved in the panel by this point.
+            fail_silently=True,
+        )
+
     @staticmethod
-    def send(user, message):
+    def send(user, message, link=''):
         """Create a notification for one user.
 
         Every feature calls this one method instead of writing its own
         ``Notification.objects.create(...)`` line, so the way we notify
-        people stays in a single place.
+        people stays in a single place. That is also why the email copy
+        is sent from here: turn the switch on once and every feature of
+        the system starts writing to you.
 
         :param user: who should receive the message.
         :type user: User.
         :param message: the text to show.
         :type message: str.
+        :param link: where the panel should send the member when they
+            open the message. Empty for a message with nothing to open.
+        :type link: str.
         :return: the notification that was saved.
         :rtype: Notification.
         """
-        return Notification.objects.create(user=user, message=message)
+        notification = Notification.objects.create(
+            user=user,
+            # The column holds 255 characters, and a rejection remark
+            # written by an officer can be longer than that.
+            message=message[:255],
+            link=link,
+        )
+        notification.send_email_copy()
+        return notification
 
 
 class Profile(models.Model):
@@ -297,6 +381,11 @@ class Profile(models.Model):
     # many wrong tries. The SRS calls this part of the account status.
     failed_login_attempts = models.PositiveIntegerField(default=0)
     locked_until = models.DateTimeField(blank=True, null=True)
+
+    # Feature 8 lets a member ask for an email copy of every message in
+    # the notification panel. It starts off, so nobody is sent mail
+    # they never asked for.
+    email_notifications = models.BooleanField(default=False)
 
     def __str__(self):
         """Return the text shown for this profile in the admin site.

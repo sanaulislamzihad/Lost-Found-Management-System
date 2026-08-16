@@ -196,7 +196,31 @@ h1, h2, h3, h4, h5 {
     }
 }
 
-/* The name of the member who is logged in. */
+/* The bell of Feature 8, with the number of unread messages sitting
+   on its corner. */
+.nav-bell {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.nav-bell-count {
+    position: absolute;
+    top: 0.1rem;
+    left: 1.55rem;
+    min-width: 1.15rem;
+    padding: 0 0.28rem;
+    border-radius: 999px;
+    background-color: #d9534f;
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.15rem;
+    text-align: center;
+}
+
+/* The name of the member who is logged in. It opens the menu that
+   holds their own pages, so the bar stays short. */
 .nav-user {
     display: flex;
     align-items: center;
@@ -205,6 +229,26 @@ h1, h2, h3, h4, h5 {
     margin: 0.25rem 0.4rem;
     border-radius: 999px;
     background-color: rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+}
+
+.nav-user:hover,
+.nav-user:focus {
+    background-color: rgba(255, 255, 255, 0.16);
+}
+
+.nav-user::after {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.dropdown-menu {
+    border-color: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+}
+
+.dropdown-item:active {
+    background-color: var(--navy);
 }
 
 .nav-avatar {
@@ -822,7 +866,285 @@ h1, h2, h3, h4, h5 {
 }
 
 /* ---------------------------------------------------------------
-   10. Small screens.
+   10. Claims (Feature 6).
+   --------------------------------------------------------------- */
+
+.detail-actions-note {
+    align-self: center;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+}
+
+/* The reminder of what is being claimed, shown above the proof box. */
+.claim-item-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--page-bg);
+}
+
+.claim-item-thumb {
+    flex: 0 0 auto;
+    width: 68px;
+    height: 68px;
+    border-radius: 0.45rem;
+    object-fit: cover;
+    background-color: var(--surface);
+}
+
+.claim-item-thumb-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem;
+    border: 1px dashed var(--border-strong);
+    color: var(--ink-muted);
+    font-size: 0.7rem;
+    text-align: center;
+}
+
+.claim-item-body {
+    min-width: 0;
+}
+
+.claim-item-title {
+    display: block;
+    color: var(--navy-dark);
+    font-weight: 600;
+}
+
+.claim-item-meta {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+}
+
+/* The three states a claim can be in. Same shape as the item badges,
+   different colours, so the two are never confused for each other. */
+.badge-claim-pending,
+.badge-claim-approved,
+.badge-claim-rejected {
+    display: inline-block;
+    padding: 0.32em 0.7em;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.badge-claim-pending {
+    background-color: #fdf1d6;
+    color: #7a5a10;
+}
+
+.badge-claim-approved {
+    background-color: #dcefe4;
+    color: #14573a;
+}
+
+.badge-claim-rejected {
+    background-color: #fbe3e5;
+    color: #8c2733;
+}
+
+.claim-card {
+    padding: 1.25rem;
+    margin-bottom: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.claim-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.claim-card-title {
+    color: var(--navy-dark);
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.claim-card-title:hover {
+    text-decoration: underline;
+}
+
+.claim-card-meta {
+    margin: 0.35rem 0 0;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+}
+
+.claim-card-detail {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 1.5rem;
+    margin: 1rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.claim-card-detail dt {
+    color: var(--ink-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.claim-card-detail dd {
+    margin-bottom: 0;
+    color: #4b5563;
+    white-space: pre-line;
+}
+
+.claim-card-note {
+    margin: 0.9rem 0 0;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+}
+
+.claim-card-note-good {
+    color: #14573a;
+    font-weight: 600;
+}
+
+/* ---------------------------------------------------------------
+   11. The notification panel (Feature 8).
+   --------------------------------------------------------------- */
+
+.email-copy-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.9rem 1.25rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.email-copy-card .form-check-input:checked {
+    background-color: var(--navy);
+    border-color: var(--navy);
+}
+
+.email-copy-side {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.email-copy-address {
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+}
+
+/* The rows share one border, the way a printed list of notices does,
+   instead of every message floating in a card of its own. */
+.notification-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.notification-panel .empty-state {
+    border: 0;
+    box-shadow: none;
+}
+
+.notification-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+}
+
+.notification-row:last-child {
+    border-bottom: 0;
+}
+
+.notification-row:hover {
+    background-color: var(--page-bg);
+    color: inherit;
+}
+
+/* An unread row is tinted and carries a navy dot, so the two states
+   are told apart by more than colour alone. */
+.notification-row-unread {
+    background-color: #f2f6fd;
+}
+
+.notification-dot {
+    flex: 0 0 auto;
+    width: 0.55rem;
+    height: 0.55rem;
+    margin-top: 0.4rem;
+    border-radius: 50%;
+    background-color: transparent;
+}
+
+.notification-row-unread .notification-dot {
+    background-color: var(--navy);
+}
+
+.notification-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.notification-message {
+    display: block;
+}
+
+.notification-row-unread .notification-message {
+    font-weight: 600;
+}
+
+.notification-time {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--ink-muted);
+    font-size: 0.8rem;
+}
+
+.notification-new {
+    flex: 0 0 auto;
+    padding: 0.2em 0.6em;
+    border-radius: 999px;
+    background-color: var(--navy);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------
+   12. Small screens.
    --------------------------------------------------------------- */
 
 @media (max-width: 575.98px) {
@@ -856,5 +1178,33 @@ h1, h2, h3, h4, h5 {
 
     .detail-list dd {
         margin-bottom: 0.75rem;
+    }
+
+    .claim-card-detail {
+        grid-template-columns: 1fr;
+        gap: 0.15rem;
+    }
+
+    .claim-card-detail dd {
+        margin-bottom: 0.75rem;
+    }
+
+    .email-copy-card,
+    .email-copy-side {
+        align-items: flex-start;
+    }
+}
+
+/* On a phone the bell sits in the stacked menu, where a badge pinned
+   to the corner of the icon would land on the text beside it. */
+@media (max-width: 991.98px) {
+    .nav-bell-count {
+        position: static;
+        margin-left: 0.5rem;
+    }
+
+    .nav-user {
+        justify-content: flex-start;
+        margin-left: 0;
     }
 }

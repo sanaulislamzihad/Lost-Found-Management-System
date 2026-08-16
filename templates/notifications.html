@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="page-head">
+                <div>
+                    <h2>Notifications</h2>
+                    <p>
+                        {% if unread_notification_count %}
+                        You have {{ unread_notification_count }}
+                        unread message{{ unread_notification_count|pluralize }}.
+                        {% else %}
+                        You are up to date.
+                        {% endif %}
+                    </p>
+                </div>
+
+                {% if unread_notification_count %}
+                <form method="post"
+                      action="{% url 'mark_all_notifications_read' %}">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-dark" type="submit">
+                        Mark all as read
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+            <!-- Feature 8: the email copy is a switch the member owns,
+                 so it sits on the panel itself. -->
+            <form class="email-copy-card" method="post"
+                  action="{% url 'set_email_copy' %}">
+                {% csrf_token %}
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox"
+                           id="email_copy" name="email_copy"
+                           {% if email_copy_on %}checked{% endif %}>
+                    <label class="form-check-label" for="email_copy">
+                        Also send me an email copy
+                    </label>
+                </div>
+                <div class="email-copy-side">
+                    <span class="email-copy-address">{{ user.email }}</span>
+                    <button class="btn btn-outline-dark btn-sm" type="submit">
+                        Save
+                    </button>
+                </div>
+            </form>
+
+            <div class="notification-panel">
+                {% for notification in notifications %}
+                <a class="notification-row {% if not notification.is_read %}notification-row-unread{% endif %}"
+                   href="{% url 'open_notification' notification.pk %}">
+                    <span class="notification-dot" aria-hidden="true"></span>
+
+                    <span class="notification-body">
+                        <span class="notification-message">
+                            {{ notification.message }}
+                        </span>
+                        <span class="notification-time">
+                            {{ notification.created_at|date:"d M Y, g:i a" }}
+                        </span>
+                    </span>
+
+                    {% if not notification.is_read %}
+                    <span class="notification-new">New</span>
+                    {% endif %}
+                </a>
+                {% empty %}
+                <div class="empty-state">
+                    <p class="mb-1">
+                        <strong>Nothing to show yet</strong>
+                    </p>
+                    <p class="text-muted mb-0">
+                        The system will write here when somebody claims
+                        your found item, when a claim of yours is
+                        decided, or when an item like the one you lost
+                        turns up.
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

@@ -55,9 +55,9 @@
                 <h5 class="detail-section-title">Description</h5>
                 <p class="detail-description">{{ item.description }}</p>
 
+                {% if item.item_type == 'found' and user == item.posted_by %}
                 <!-- Feature 4: only the member who wrote the post may
                      change it or take it down. -->
-                {% if item.item_type == 'found' and user == item.posted_by %}
                 <div class="detail-actions">
                     <a class="btn btn-primary"
                        href="{% url 'edit_found_item' item.pk %}">
@@ -67,6 +67,19 @@
                        href="{% url 'delete_found_item' item.pk %}">
                         Delete
                     </a>
+                </div>
+                {% elif item.item_type == 'found' and item.is_open %}
+                <!-- Feature 6: anybody else may say the item is theirs.
+                     A visitor who is not logged in is sent to the login
+                     page first by the claim view itself. -->
+                <div class="detail-actions">
+                    <a class="btn btn-primary"
+                       href="{% url 'claim_item' item.pk %}">
+                        This is mine &mdash; claim it
+                    </a>
+                    <span class="detail-actions-note">
+                        You will be asked for proof that it belongs to you.
+                    </span>
                 </div>
                 {% endif %}
             </div>
