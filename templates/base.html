@@ -16,32 +16,66 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'index' %}">Lost &amp; Found</a>
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <span class="brand-mark">L&amp;F</span>
+            <span class="brand-text">
+                Lost &amp; Found
+                <small>North South University</small>
+            </span>
+        </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#menu">
+                data-bs-target="#menu" aria-controls="menu"
+                aria-expanded="false" aria-label="Open the menu">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="menu">
-            <ul class="navbar-nav ms-auto">
-                {% if user.is_authenticated %}
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <!-- resolver_match holds the name of the page being
+                     shown, so the link to that page can mark itself. -->
                 <li class="nav-item">
-                    <span class="nav-link">Hello, {{ user.first_name }}</span>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+                       href="{% url 'index' %}">
+                        Home
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'logout' %}">
-                        Logout
+                    <a class="nav-link {% if request.resolver_match.url_name == 'item_list' %}active{% endif %}"
+                       href="{% url 'item_list' %}">
+                        Browse items
+                    </a>
+                </li>
+
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'report_found_item' %}active{% endif %}"
+                       href="{% url 'report_found_item' %}">
+                        Report a found item
+                    </a>
+                </li>
+                <li class="nav-item nav-user">
+                    <span class="nav-avatar" aria-hidden="true">
+                        {{ user.first_name|slice:":1"|upper|default:"?" }}
+                    </span>
+                    <span class="nav-user-name">{{ user.first_name }}</span>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-light btn-sm nav-cta"
+                       href="{% url 'logout' %}">
+                        Log out
                     </a>
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'login' %}">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
+                       href="{% url 'login' %}">
                         Log in
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">
+                    <a class="btn btn-outline-light btn-sm nav-cta"
+                       href="{% url 'register' %}">
                         Register
                     </a>
                 </li>
@@ -51,20 +85,39 @@
     </div>
 </nav>
 
-<div class="container mt-3">
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-</div>
+<main class="page">
+    {% if messages %}
+    <div class="container pt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-{% block body %}
-{% endblock body %}
+    {% block body %}
+    {% endblock body %}
+</main>
 
-<footer class="bg-dark text-white mt-5 py-3">
+<footer class="site-footer">
     <div class="container">
-        <p class="mb-0">
-            Lost &amp; Found Management System &mdash; North South University
-        </p>
+        <div class="row gy-3">
+            <div class="col-md-6">
+                <p class="footer-title mb-1">
+                    Lost &amp; Found Management System
+                </p>
+                <p class="mb-0">
+                    North South University &mdash; Bashundhara, Dhaka 1229
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="{% url 'item_list' %}">Browse items</a>
+                <span class="footer-dot">&middot;</span>
+                <a href="{% url 'report_found_item' %}">Report a found item</a>
+                <p class="footer-note mb-0">
+                    CSE-327 Software Engineering project
+                </p>
+            </div>
+        </div>
     </div>
 </footer>
 

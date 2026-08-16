@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "home.apps.HomeConfig",
     "register.apps.RegisterConfig",
     "login_logout.apps.LoginLogoutConfig",
+    "report_found_item.apps.ReportFoundItemConfig",
+    "search_items.apps.SearchItemsConfig",
 ]
 
 MIDDLEWARE = [

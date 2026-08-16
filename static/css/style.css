@@ -1,9 +1,860 @@
-/* Small style additions on top of Bootstrap. */
+/* Style additions on top of Bootstrap.
+
+   Bootstrap gives the grid and the components. This file gives the
+   system its own look: the university colours, the page background,
+   the cards and the footer. Everything is driven by the few variables
+   at the top, so one change here shows on every page. */
+
+/* ---------------------------------------------------------------
+   1. The colours and the sizes the whole site shares.
+   --------------------------------------------------------------- */
+
+:root {
+    /* Navy and gold, the colours of the university crest. */
+    --navy: #12305b;
+    --navy-dark: #0b1f3d;
+    --navy-soft: #1c4380;
+    --gold: #c8a45c;
+
+    --page-bg: #f4f6fa;
+    --surface: #ffffff;
+    --border: #dfe3ea;
+    --border-strong: #c3cad6;
+    --ink: #1f2937;
+    --ink-muted: #6b7280;
+
+    --radius: 0.65rem;
+    --shadow-sm: 0 1px 2px rgba(16, 32, 60, 0.06);
+    --shadow-md: 0 0.5rem 1.25rem rgba(16, 32, 60, 0.09);
+
+    /* Bootstrap builds .bg-dark and .text-bg-dark out of this, so
+       telling it the navy once turns the whole dark theme navy. */
+    --bs-dark-rgb: 18, 48, 91;
+}
+
+/* Bootstrap 5.3 builds every button out of these variables, so the
+   blue of the framework becomes the navy of the university without
+   any button in any template having to change. */
+.btn-primary {
+    --bs-btn-bg: var(--navy);
+    --bs-btn-border-color: var(--navy);
+    --bs-btn-hover-bg: var(--navy-dark);
+    --bs-btn-hover-border-color: var(--navy-dark);
+    --bs-btn-active-bg: var(--navy-dark);
+    --bs-btn-active-border-color: var(--navy-dark);
+    --bs-btn-disabled-bg: var(--navy);
+    --bs-btn-disabled-border-color: var(--navy);
+}
+
+.btn-outline-dark {
+    --bs-btn-color: var(--navy);
+    --bs-btn-border-color: var(--border-strong);
+    --bs-btn-hover-bg: var(--navy);
+    --bs-btn-hover-border-color: var(--navy);
+    --bs-btn-active-bg: var(--navy);
+    --bs-btn-active-border-color: var(--navy);
+}
+
+.btn-link {
+    --bs-btn-color: var(--navy);
+    --bs-btn-hover-color: var(--navy-dark);
+}
+
+a {
+    color: var(--navy);
+}
+
+a:hover {
+    color: var(--navy-dark);
+}
+
+/* The focus ring of the browser is kept, only recoloured, so that
+   somebody moving through the form with the Tab key can still see
+   where they are. */
+.form-control:focus,
+.form-select:focus,
+.btn:focus-visible {
+    border-color: var(--navy-soft);
+    box-shadow: 0 0 0 0.2rem rgba(18, 48, 91, 0.15);
+}
+
+/* ---------------------------------------------------------------
+   2. The shell of every page.
+
+   The body is a column, the middle grows, and the footer is the last
+   item, so a short page keeps the footer at the bottom of the window
+   instead of leaving it floating in the middle.
+   --------------------------------------------------------------- */
 
 body {
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--page-bg);
+    color: var(--ink);
 }
 
+.page {
+    flex: 1 0 auto;
+    padding-bottom: 4rem;
+}
+
+h1, h2, h3, h4, h5 {
+    color: var(--navy-dark);
+    font-weight: 600;
+}
+
+.text-muted {
+    color: var(--ink-muted) !important;
+}
+
+/* ---------------------------------------------------------------
+   3. The bar at the top and the footer at the bottom.
+   --------------------------------------------------------------- */
+
+.navbar {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 3px solid var(--gold);
+    box-shadow: var(--shadow-sm);
+}
+
+/* The crest: the initials in a gold square, then the name of the
+   system with the name of the university under it. */
 .navbar-brand {
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.brand-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 0.5rem;
+    background-color: var(--gold);
+    color: var(--navy-dark);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+}
+
+.brand-text small {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    position: relative;
+    padding: 0.45rem 0.85rem;
+    border-radius: 0.4rem;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #fff;
+}
+
+/* A gold rule under the page you are on, so the bar itself says
+   where you are. It is hidden while the menu is stacked on a phone,
+   where an underline under a full width row reads as a divider. */
+@media (min-width: 992px) {
+    .navbar-dark .navbar-nav .nav-link.active::after {
+        content: '';
+        position: absolute;
+        right: 0.85rem;
+        bottom: -0.15rem;
+        left: 0.85rem;
+        height: 2px;
+        border-radius: 2px;
+        background-color: var(--gold);
+    }
+}
+
+/* The name of the member who is logged in. */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    margin: 0.25rem 0.4rem;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.nav-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    background-color: var(--gold);
+    color: var(--navy-dark);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.nav-user-name {
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.nav-cta {
+    --bs-btn-padding-x: 1rem;
+    --bs-btn-border-color: rgba(255, 255, 255, 0.45);
+    --bs-btn-hover-bg: #fff;
+    --bs-btn-hover-color: var(--navy-dark);
+    --bs-btn-hover-border-color: #fff;
+    margin: 0.35rem 0;
+}
+
+.site-footer {
+    /* auto is what pins the footer to the bottom of a short page. */
+    margin-top: auto;
+    padding: 2.5rem 0;
+    background-color: var(--navy-dark);
+    border-top: 3px solid var(--gold);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.footer-title {
+    color: #fff;
+    font-weight: 600;
+}
+
+.site-footer a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    color: var(--gold);
+}
+
+.footer-dot {
+    padding: 0 0.4rem;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.footer-note {
+    margin-top: 0.35rem;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.8rem;
+}
+
+.alert {
+    border: 0;
+    border-left: 4px solid currentColor;
+    border-radius: var(--radius);
+}
+
+/* ---------------------------------------------------------------
+   4. The home page.
+   --------------------------------------------------------------- */
+
+.hero {
+    padding: 3.5rem 0 3rem;
+    background-color: var(--navy);
+    /* A quiet slant of a lighter navy, so the band is not one flat
+       block of colour behind the words. */
+    background-image: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+    color: #fff;
+}
+
+.hero-eyebrow {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+    padding: 0.25rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    color: #fff;
+    font-weight: 700;
+}
+
+.hero-text {
+    max-width: 34rem;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.hero-search {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 34rem;
+    margin-top: 1.5rem;
+}
+
+.hero-search .form-control {
+    border: 0;
+    padding: 0.7rem 1rem;
+}
+
+.hero-search .btn {
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
+    white-space: nowrap;
+}
+
+/* The buttons on the navy band are light, because a navy button on a
+   navy background would disappear. */
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.hero-actions .btn {
+    --bs-btn-color: #fff;
+    --bs-btn-border-color: rgba(255, 255, 255, 0.5);
+    --bs-btn-hover-color: var(--navy-dark);
+    --bs-btn-hover-bg: #fff;
+    --bs-btn-hover-border-color: #fff;
+}
+
+.stat-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.stat-tile {
+    padding: 1.5rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius);
+    background-color: rgba(255, 255, 255, 0.08);
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    color: var(--gold);
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.85rem;
+}
+
+.section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+/* A short gold rule under a heading, the way a printed university
+   notice underlines its sections. */
+.section-head h3::after {
+    content: '';
+    display: block;
+    width: 3rem;
+    height: 3px;
+    margin-top: 0.5rem;
+    background-color: var(--gold);
+}
+
+.step-card {
+    height: 100%;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-bottom: 0.85rem;
+    border-radius: 50%;
+    background-color: var(--navy);
+    color: #fff;
+    font-weight: 700;
+}
+
+.step-card p {
+    margin-bottom: 0;
+    color: var(--ink-muted);
+}
+
+/* One of the newest found items on the home page. */
+.recent-card {
+    display: block;
+    height: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+    color: inherit;
+    text-decoration: none;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.recent-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    color: inherit;
+}
+
+.recent-photo {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background-color: var(--page-bg);
+}
+
+.recent-photo-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px dashed var(--border);
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+}
+
+.recent-body {
+    padding: 0.85rem 1rem 1rem;
+}
+
+.recent-name {
+    display: block;
+    font-weight: 600;
+}
+
+.recent-place {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+}
+
+/* ---------------------------------------------------------------
+   5. Badges for the type and the status of a post.
+
+   The template writes badge-status-{{ item.status }}, so the colour of
+   every state is decided here in the stylesheet and no template has to
+   carry a chain of if tags.
+   --------------------------------------------------------------- */
+
+.badge-type-lost,
+.badge-type-found,
+.badge-status-pending,
+.badge-status-available,
+.badge-status-claimed,
+.badge-status-resolved {
+    display: inline-block;
+    padding: 0.32em 0.7em;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.badge-type-lost {
+    background-color: #fbe3e5;
+    color: #8c2733;
+}
+
+.badge-type-found {
+    background-color: #dcefe4;
+    color: #14573a;
+}
+
+.badge-status-pending {
+    background-color: #fdf1d6;
+    color: #7a5a10;
+}
+
+.badge-status-available {
+    background-color: #dde7f6;
+    color: var(--navy);
+}
+
+.badge-status-claimed {
+    background-color: #e6e0f4;
+    color: #4a2f7d;
+}
+
+.badge-status-resolved {
+    background-color: #e7e9ec;
+    color: #495057;
+}
+
+/* ---------------------------------------------------------------
+   6. The search and filter panel of the item list.
+   --------------------------------------------------------------- */
+
+.page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.page-head h2 {
+    margin-bottom: 0.25rem;
+}
+
+.page-head p {
+    margin-bottom: 0;
+    color: var(--ink-muted);
+}
+
+.filter-card {
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--navy);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-card .form-label {
+    margin-bottom: 0.3rem;
+    color: var(--ink-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+/* Wraps on a narrow screen instead of pushing the buttons off. */
+.filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.result-count {
+    margin: 1.75rem 0 0.85rem;
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+}
+
+/* ---------------------------------------------------------------
+   7. One row of the item list. The whole row is a link, so the
+      colours of a normal link have to be turned off here.
+   --------------------------------------------------------------- */
+
+.item-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.15rem;
+    padding: 1.1rem;
+    margin-bottom: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease,
+                transform 0.15s ease;
+}
+
+.item-card:hover,
+.item-card:focus-visible {
+    border-color: var(--navy-soft);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    color: inherit;
+}
+
+.item-thumb {
+    flex: 0 0 auto;
+    width: 104px;
+    height: 104px;
+    border-radius: var(--radius);
+    /* cover keeps a tall photo and a wide photo the same size on the
+       page without squashing either of them. */
+    object-fit: cover;
+    background-color: var(--page-bg);
+}
+
+.item-thumb-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border: 1px dashed var(--border-strong);
+    color: var(--ink-muted);
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+/* min-width lets a long description shrink instead of stretching the
+   row wider than the screen. */
+.item-card-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.item-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.item-card-title {
+    color: var(--navy-dark);
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.item-card-meta {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+}
+
+.item-card-meta .badge-type-lost,
+.item-card-meta .badge-type-found {
+    margin-right: 0.35rem;
+}
+
+.item-card-text {
+    display: block;
+    margin-top: 0.45rem;
+    color: #4b5563;
+    font-size: 0.9rem;
+}
+
+.item-card-arrow {
+    align-self: center;
+    color: var(--border-strong);
+    font-size: 1.9rem;
+    line-height: 1;
+}
+
+.item-card:hover .item-card-arrow {
+    color: var(--navy);
+}
+
+/* Shown when nothing matches the search. */
+.empty-state {
+    padding: 3.5rem 1rem;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    text-align: center;
+}
+
+/* ---------------------------------------------------------------
+   8. The page of one post.
+   --------------------------------------------------------------- */
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--ink-muted);
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: var(--navy);
+}
+
+.detail-card {
+    padding: 1.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.detail-photo {
+    width: 100%;
+    max-height: 400px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    /* contain, not cover, because the whole item has to stay visible
+       here even if the photo is an odd shape. */
+    object-fit: contain;
+    background-color: var(--page-bg);
+}
+
+.detail-photo-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 260px;
+    border-style: dashed;
+    border-color: var(--border-strong);
+    color: var(--ink-muted);
+}
+
+.detail-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.detail-title {
+    margin-top: 0.65rem;
+}
+
+/* Label on the left, answer on the right, one under the other on a
+   phone. */
+.detail-list {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.55rem 1.5rem;
+    margin: 1.35rem 0 0;
+    padding-top: 1.35rem;
+    border-top: 1px solid var(--border);
+}
+
+.detail-list dt {
+    color: var(--ink-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.detail-list dd {
+    margin-bottom: 0;
+}
+
+.detail-section-title {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+}
+
+.detail-description {
+    color: #4b5563;
+    white-space: pre-line;
+}
+
+.detail-actions,
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+/* ---------------------------------------------------------------
+   9. The report form and the delete question.
+   --------------------------------------------------------------- */
+
+.form-card {
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--navy);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-md);
+}
+
+.form-card .form-label {
+    font-weight: 600;
+}
+
+.form-lead {
+    margin-bottom: 1.5rem;
+    color: var(--ink-muted);
+}
+
+.confirm-box {
+    padding: 1rem 1.15rem;
+    margin-bottom: 1.25rem;
+    border-left: 4px solid #b02a37;
+    border-radius: var(--radius);
+    background-color: #fbe3e5;
+}
+
+/* ---------------------------------------------------------------
+   10. Small screens.
+   --------------------------------------------------------------- */
+
+@media (max-width: 575.98px) {
+    .hero {
+        padding: 2.5rem 0 2rem;
+    }
+
+    .hero-search {
+        flex-direction: column;
+    }
+
+    /* The thumbnail goes full width above the text, because a 104px
+       square next to the words leaves nothing readable on a phone. */
+    .item-card {
+        flex-direction: column;
+    }
+
+    .item-thumb {
+        width: 100%;
+        height: 170px;
+    }
+
+    .item-card-arrow {
+        display: none;
+    }
+
+    .detail-list {
+        grid-template-columns: 1fr;
+        gap: 0.15rem;
+    }
+
+    .detail-list dd {
+        margin-bottom: 0.75rem;
+    }
 }

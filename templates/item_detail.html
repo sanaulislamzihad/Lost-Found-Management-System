@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ item.item_name }} - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+    <a class="back-link" href="{% url 'item_list' %}">
+        &lsaquo; Back to all posts
+    </a>
+
+    <div class="detail-card">
+        <div class="row g-4">
+            <div class="col-lg-5">
+                {% if item.image %}
+                <img class="detail-photo" src="{{ item.image.url }}"
+                     alt="{{ item.item_name }}">
+                {% else %}
+                <div class="detail-photo detail-photo-empty">
+                    No photo was uploaded
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="col-lg-7">
+                <div class="detail-badges">
+                    <span class="badge-type-{{ item.item_type }}">
+                        {{ item.get_item_type_display }}
+                    </span>
+                    <span class="badge-status-{{ item.status }}">
+                        {{ item.get_status_display }}
+                    </span>
+                </div>
+
+                <h2 class="detail-title">{{ item.item_name }}</h2>
+
+                <dl class="detail-list">
+                    <dt>Category</dt>
+                    <dd>{{ item.category.name }}</dd>
+
+                    <dt>{% if item.item_type == 'found' %}Found at{% else %}Last seen at{% endif %}</dt>
+                    <dd>{{ item.location }}</dd>
+
+                    <dt>{% if item.item_type == 'found' %}Date found{% else %}Date lost{% endif %}</dt>
+                    <dd>{{ item.date|date:"d F Y" }}</dd>
+
+                    <dt>Posted by</dt>
+                    <dd>{{ item.posted_by.first_name|default:item.posted_by.username }}</dd>
+
+                    <dt>Posted on</dt>
+                    <dd>{{ item.created_at|date:"d F Y, g:i a" }}</dd>
+                </dl>
+
+                <h5 class="detail-section-title">Description</h5>
+                <p class="detail-description">{{ item.description }}</p>
+
+                <!-- Feature 4: only the member who wrote the post may
+                     change it or take it down. -->
+                {% if item.item_type == 'found' and user == item.posted_by %}
+                <div class="detail-actions">
+                    <a class="btn btn-primary"
+                       href="{% url 'edit_found_item' item.pk %}">
+                        Edit this post
+                    </a>
+                    <a class="btn btn-outline-danger"
+                       href="{% url 'delete_found_item' item.pk %}">
+                        Delete
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock body %}
