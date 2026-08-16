@@ -57,3 +57,20 @@ def login(request):
     profile.note_successful_login()
     auth.login(request, user)
     return redirect('index')
+
+
+def logout(request):
+    """This method is used to end the session and send the member back
+    to the home page.
+
+    Django's logout clears the session row and the session cookie, so
+    pressing the back button does not bring the account back.
+
+    :param request: it's a HttpRequest from the user.
+    :type request: HttpRequest.
+    :return: a redirect to the home page.
+    :rtype: HttpResponse.
+    """
+    auth.logout(request)
+    messages.info(request, 'You have been logged out.')
+    return redirect('index')
