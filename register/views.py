@@ -86,4 +86,4 @@ def register(request):
     user.profile.save()
 
     messages.info(request, 'Registration successful. You can log in now.')
-    return redirect('index')
+    return redirect('login')

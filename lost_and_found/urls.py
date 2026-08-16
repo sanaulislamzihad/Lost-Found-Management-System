@@ -13,6 +13,7 @@ from django.urls import include, path
 urlpatterns = [
     path('', include('home.urls')),
     path('', include('register.urls')),
+    path('', include('login_logout.urls')),
     path('admin/', admin.site.urls),
 ]
 

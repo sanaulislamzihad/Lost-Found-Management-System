@@ -6,8 +6,16 @@ but the tables are shared between those features, so they are kept here
 and imported with ``from core.models import Item``.
 """
 
+from datetime import timedelta
+
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
+
+# How many wrong logins in a row are allowed, and how long the account
+# stays shut after that. SRS Feature 2 asks for exactly these numbers.
+MAX_LOGIN_ATTEMPTS = 5
+LOCK_MINUTES = 15
 
 ITEM_TYPE_CHOICES = [
     ('lost', 'Lost'),
@@ -285,6 +293,11 @@ class Profile(models.Model):
         default='student',
     )
 
+    # Used by the login view to shut an account for a while after too
+    # many wrong tries. The SRS calls this part of the account status.
+    failed_login_attempts = models.PositiveIntegerField(default=0)
+    locked_until = models.DateTimeField(blank=True, null=True)
+
     def __str__(self):
         """Return the text shown for this profile in the admin site.
 
@@ -303,3 +316,38 @@ class Profile(models.Model):
         :rtype: bool.
         """
         return self.role == 'officer'
+
+    def is_locked(self):
+        """This method tells whether the account is still shut because
+        of too many wrong logins.
+
+        :return: True while the lock time has not passed yet.
+        :rtype: bool.
+        """
+        if self.locked_until is None:
+            return False
+        return self.locked_until > timezone.now()
+
+    def note_failed_login(self):
+        """This method counts one wrong login and shuts the account
+        when there are too many of them in a row.
+
+        The counter starts again after the account is locked, so the
+        next lock also needs a fresh set of wrong tries.
+        """
+        self.failed_login_attempts += 1
+
+        if self.failed_login_attempts >= MAX_LOGIN_ATTEMPTS:
+            self.locked_until = timezone.now() + timedelta(
+                minutes=LOCK_MINUTES,
+            )
+            self.failed_login_attempts = 0
+
+        self.save()
+
+    def note_successful_login(self):
+        """This method clears the counter and the lock after the member
+        gets in."""
+        self.failed_login_attempts = 0
+        self.locked_until = None
+        self.save()
