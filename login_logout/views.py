@@ -4,7 +4,7 @@ Feature 2 of the SRS lives here: a member signs in with the email and
 the password they registered with, and signs out when they are done.
 """
 
-from django.contrib import auth
+from django.contrib import auth, messages
 from django.shortcuts import redirect, render
 
 
@@ -30,6 +30,9 @@ def login(request):
 
     user = auth.authenticate(request, username=email, password=password)
     if user is None:
+        # One message for both cases on purpose. Saying which half was
+        # wrong would tell a stranger that the email exists.
+        messages.error(request, 'Wrong email or password.')
         return render(request, 'login.html')
 
     auth.login(request, user)
