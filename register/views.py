@@ -1,8 +1,5 @@
-"""Views of the register app.
-
-Feature 1 of the SRS lives here: a student or a staff member opens an
-account with a full name, a university or employee ID, an email and a
-password.
+"""
+This module is used to hold the views of the register app.
 """
 
 from django.contrib import messages
@@ -16,32 +13,27 @@ from core.models import Profile
 
 
 def register(request):
-    """Show the registration form and create the account.
+    """
+    This method is used to show the registration form and to create the
+    account when the form is submitted. The email is saved as the
+    username as well, so the member can log in with it later.
 
-    The SRS asks for four fields: full name, university or employee ID,
-    email and password. The email is also saved as the username, so a
-    member can log in with the email later on.
-
-    :param request: the HTTP request sent by the visitor.
+    :param request: it's a HttpRequest from the user.
     :type request: HttpRequest.
-    :return: the registration page on GET, the home page after a
-        successful registration.
+    :return: the registration page, or the login page once the account
+     is created.
     :rtype: HttpResponse.
     """
     if request.method != 'POST':
         return render(request, 'register.html')
 
-    # .get() is used instead of [...] so that a request which leaves a
-    # field out altogether shows the form again instead of crashing.
     full_name = request.POST.get('full_name', '').strip()
     university_id = request.POST.get('university_id', '').strip()
     email = request.POST.get('email', '').strip()
     password = request.POST.get('password', '')
 
-    # The template marks every box required, but that only stops an
-    # honest browser. The same four fields are checked again here,
-    # because the SRS asks for all four and a request can be sent
-    # without the form.
+    # The template marks every box required, but the fields are checked
+    # here again because a request can be sent without the form.
     if not full_name:
         messages.error(request, 'Please write your full name.')
         return render(request, 'register.html')
@@ -71,8 +63,7 @@ def register(request):
         messages.error(request, 'This ID is already registered.')
         return render(request, 'register.html')
 
-    # create_user hashes the password before it is written, so the
-    # plain text never reaches the database.
+    # create_user hashes the password, so the plain text is never saved.
     user = User.objects.create_user(
         username=email,
         email=email,
@@ -80,8 +71,8 @@ def register(request):
         first_name=full_name,
     )
 
-    # The profile row already exists because of the post_save signal
-    # that the core app connects to the User model.
+    # The profile row is already there because of the post_save signal
+    # in the core app.
     user.profile.university_id = university_id
     user.profile.save()
 
