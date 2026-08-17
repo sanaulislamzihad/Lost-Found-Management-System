@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete this post - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="form-card">
+                <h3>Delete this post?</h3>
+                <p class="form-lead">
+                    The post will be removed for good. If you have the
+                    item back, mark the post as resolved instead so it
+                    stays in your history.
+                </p>
+
+                <div class="confirm-box">
+                    <strong>{{ item.item_name }}</strong><br>
+                    <span class="text-muted">
+                        {{ item.category.name }}
+                        &middot; {{ item.location }}
+                        &middot; {{ item.date|date:"d M Y" }}
+                    </span>
+                </div>
+
+                <!-- The post is removed only by this POST, so opening
+                     the page by itself never deletes anything. -->
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-actions">
+                        <button class="btn btn-danger" type="submit">
+                            Yes, delete it
+                        </button>
+                        <a class="btn btn-outline-dark"
+                           href="{% url 'item_detail' item.pk %}">
+                            Keep the post
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

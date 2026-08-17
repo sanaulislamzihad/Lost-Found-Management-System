@@ -1504,7 +1504,226 @@ h1, h2, h3, h4, h5 {
 }
 
 /* ---------------------------------------------------------------
-   14. Small screens.
+   14. The claim queue and the review page (Feature 7).
+   --------------------------------------------------------------- */
+
+/* The link to the queue carries the number of claims waiting, so an
+   officer sees the work from any page. */
+.nav-queue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
+.nav-queue-count {
+    min-width: 1.3rem;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    background-color: var(--gold);
+    color: var(--navy-dark);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.3rem;
+    text-align: center;
+}
+
+.verify-header {
+    padding: 1.75rem 0;
+    background-color: var(--navy);
+    background-image: linear-gradient(135deg, var(--navy) 0%,
+                                      var(--navy-soft) 100%);
+    color: #fff;
+}
+
+.verify-eyebrow {
+    margin-bottom: 0.15rem;
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.verify-title {
+    margin-bottom: 0.35rem;
+    color: #fff;
+}
+
+.verify-lead {
+    margin-bottom: 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* One waiting claim in the queue. Same shape as an item row, with the
+   proof quoted underneath so the officer can triage without opening
+   every one of them. */
+.queue-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.15rem;
+    padding: 1.1rem;
+    margin-bottom: 0.85rem;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease,
+                transform 0.15s ease;
+}
+
+.queue-card:hover,
+.queue-card:focus-visible {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    color: inherit;
+}
+
+.queue-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.queue-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.queue-proof {
+    display: block;
+    margin-top: 0.45rem;
+    color: #4b5563;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.review-section {
+    padding-bottom: 0.6rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* Who is claiming, with the contact details the officer needs to call
+   them in to the security office. */
+.review-who {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 0.9rem 1rem;
+    border-radius: var(--radius);
+    background-color: var(--page-bg);
+}
+
+.review-avatar {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 50%;
+    background-color: var(--navy);
+    color: #fff;
+    font-weight: 700;
+}
+
+.review-who > span:nth-child(2) {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.review-name {
+    display: block;
+    color: var(--navy-dark);
+    font-weight: 600;
+}
+
+.review-meta {
+    display: block;
+    color: var(--ink-muted);
+    font-size: 0.82rem;
+}
+
+/* The proof is the whole reason this page exists, so it is given the
+   weight of a pulled quote. */
+.proof-box {
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0;
+    border-left: 4px solid var(--navy);
+    border-radius: var(--radius);
+    background-color: #f2f6fd;
+    color: var(--ink);
+    white-space: pre-line;
+}
+
+.other-claims {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+.other-claims li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.other-claims li:last-child {
+    border-bottom: 0;
+}
+
+.decision-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+}
+
+.decision-actions .btn-success {
+    --bs-btn-bg: #2f7d55;
+    --bs-btn-border-color: #2f7d55;
+    --bs-btn-hover-bg: #256444;
+    --bs-btn-hover-border-color: #256444;
+    --bs-btn-active-bg: #256444;
+}
+
+.decision-note {
+    margin: 0.85rem 0 0;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+}
+
+/* Shown instead of the buttons once the claim has been decided. */
+.decision-done {
+    padding: 1rem 1.25rem;
+    margin-top: 1.5rem;
+    border-left: 4px solid var(--border-strong);
+    border-radius: var(--radius);
+    background-color: var(--page-bg);
+}
+
+/* Feature 3: "I got it back" is a form, so it needs to sit in the row
+   of buttons as if it were one. */
+.detail-actions form {
+    margin: 0;
+}
+
+/* ---------------------------------------------------------------
+   15. Small screens.
    --------------------------------------------------------------- */
 
 @media (max-width: 575.98px) {
@@ -1570,6 +1789,27 @@ h1, h2, h3, h4, h5 {
     .row-form .form-select,
     .row-form .form-control {
         width: 100%;
+    }
+
+    .queue-card {
+        flex-direction: column;
+    }
+
+    .queue-card .item-thumb {
+        width: 100%;
+        height: 170px;
+    }
+
+    .decision-actions .btn {
+        width: 100%;
+    }
+}
+
+/* On a phone the queue count sits in the stacked menu, beside the
+   words rather than pinned to a corner. */
+@media (max-width: 991.98px) {
+    .nav-queue {
+        justify-content: flex-start;
     }
 }
 

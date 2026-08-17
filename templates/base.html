@@ -48,12 +48,47 @@
                 </li>
 
                 {% if user.is_authenticated %}
+                <!-- Feature 3 and Feature 4 sit together, because a
+                     member arriving here wants to report something and
+                     only then thinks about which of the two it is. -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle {% if request.resolver_match.url_name == 'report_found_item' or request.resolver_match.url_name == 'report_lost_item' %}active{% endif %}"
+                       href="#" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        Report
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item"
+                               href="{% url 'report_lost_item' %}">
+                                I lost something
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="{% url 'report_found_item' %}">
+                                I found something
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Feature 7: only a Security Officer or an Admin is
+                     shown the queue, and the count comes from the
+                     context processor of the verify_claims app. -->
+                {% if can_verify_claims %}
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'report_found_item' %}active{% endif %}"
-                       href="{% url 'report_found_item' %}">
-                        Report a found item
+                    <a class="nav-link nav-queue {% if request.resolver_match.url_name == 'claim_queue' %}active{% endif %}"
+                       href="{% url 'claim_queue' %}">
+                        Verify claims
+                        {% if pending_claim_count %}
+                        <span class="nav-queue-count">
+                            {{ pending_claim_count }}
+                        </span>
+                        {% endif %}
                     </a>
                 </li>
+                {% endif %}
 
                 <!-- Feature 8: the bell carries the number of unread
                      messages, put there by the context processor of

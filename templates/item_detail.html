@@ -68,6 +68,33 @@
                         Delete
                     </a>
                 </div>
+                {% elif item.item_type == 'lost' and user == item.posted_by %}
+                <!-- Feature 3: the owner may correct their own lost
+                     post, take it down, or close it once the item is
+                     back in their hands. -->
+                <div class="detail-actions">
+                    <a class="btn btn-primary"
+                       href="{% url 'edit_lost_item' item.pk %}">
+                        Edit this post
+                    </a>
+
+                    {% if item.is_open %}
+                    <!-- Closing is a change, so it is a button and not
+                         a link that could be followed by accident. -->
+                    <form method="post"
+                          action="{% url 'resolve_lost_item' item.pk %}">
+                        {% csrf_token %}
+                        <button class="btn btn-success" type="submit">
+                            I got it back
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <a class="btn btn-outline-danger"
+                       href="{% url 'delete_lost_item' item.pk %}">
+                        Delete
+                    </a>
+                </div>
                 {% elif item.item_type == 'found' and item.is_open %}
                 <!-- Feature 6: anybody else may say the item is theirs.
                      A visitor who is not logged in is sent to the login
