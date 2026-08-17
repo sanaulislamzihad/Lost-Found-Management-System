@@ -20,6 +20,8 @@ urlpatterns = [
     path('', include('notifications.urls')),
     path('', include('profile_history.urls')),
     path('', include('admin_panel.urls')),
+    path('', include('report_lost_item.urls')),
+    path('', include('verify_claims.urls')),
     path('admin/', admin.site.urls),
 ]
 

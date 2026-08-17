@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Claim on {{ claim.item.item_name }} - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+    <a class="back-link" href="{% url 'claim_queue' %}">
+        &lsaquo; Back to the queue
+    </a>
+
+    <div class="row g-4">
+
+        <!-- Left: what is being claimed. The SRS asks for the item
+             details to sit beside the proof. -->
+        <div class="col-lg-5">
+            <div class="detail-card">
+                <h5 class="review-section">The item</h5>
+
+                {% if claim.item.image %}
+                <img class="detail-photo" src="{{ claim.item.image.url }}"
+                     alt="{{ claim.item.item_name }}">
+                {% else %}
+                <div class="detail-photo detail-photo-empty">
+                    No photo was uploaded
+                </div>
+                {% endif %}
+
+                <div class="detail-badges mt-3">
+                    <span class="badge-type-{{ claim.item.item_type }}">
+                        {{ claim.item.get_item_type_display }}
+                    </span>
+                    <span class="badge-status-{{ claim.item.status }}">
+                        {{ claim.item.get_status_display }}
+                    </span>
+                </div>
+
+                <h4 class="detail-title">{{ claim.item.item_name }}</h4>
+
+                <dl class="detail-list">
+                    <dt>Category</dt>
+                    <dd>{{ claim.item.category.name }}</dd>
+
+                    <dt>Found at</dt>
+                    <dd>{{ claim.item.location }}</dd>
+
+                    <dt>Date found</dt>
+                    <dd>{{ claim.item.date|date:"d F Y" }}</dd>
+
+                    <dt>Handed in by</dt>
+                    <dd>
+                        {{ claim.item.posted_by.first_name|default:claim.item.posted_by.username }}
+                    </dd>
+                </dl>
+
+                <h5 class="detail-section-title">What the finder wrote</h5>
+                <p class="detail-description">{{ claim.item.description }}</p>
+
+                <p class="mt-3 mb-0">
+                    <a href="{% url 'item_detail' claim.item.pk %}">
+                        Open the full post &rsaquo;
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Right: the proof and the decision. -->
+        <div class="col-lg-7">
+            <div class="detail-card">
+                <h5 class="review-section">The claim</h5>
+
+                <div class="review-who">
+                    <span class="review-avatar" aria-hidden="true">
+                        {{ claim.claimed_by.first_name|slice:":1"|upper|default:"?" }}
+                    </span>
+                    <span>
+                        <span class="review-name">
+                            {{ claim.claimed_by.first_name|default:claim.claimed_by.username }}
+                        </span>
+                        <span class="review-meta">
+                            {{ claim.claimed_by.email }}
+                            {% if claim.claimed_by.profile.university_id %}
+                            &middot; ID {{ claim.claimed_by.profile.university_id }}
+                            {% endif %}
+                            {% if claim.claimed_by.profile.phone_number %}
+                            &middot; {{ claim.claimed_by.profile.phone_number }}
+                            {% endif %}
+                        </span>
+                        <span class="review-meta">
+                            Sent {{ claim.created_at|date:"d F Y, g:i a" }}
+                        </span>
+                    </span>
+                    <span class="badge-claim-{{ claim.status }}">
+                        {{ claim.get_status_display }}
+                    </span>
+                </div>
+
+                <h5 class="detail-section-title">Proof of ownership</h5>
+                <blockquote class="proof-box">{{ claim.proof }}</blockquote>
+
+                {% if other_claims %}
+                <!-- Approving this one closes every other claim on the
+                     same item, so the officer sees them first. -->
+                <h5 class="detail-section-title">
+                    Other claims on this item
+                </h5>
+                <ul class="other-claims">
+                    {% for other in other_claims %}
+                    <li>
+                        <a href="{% url 'review_claim' other.pk %}">
+                            {{ other.claimed_by.first_name|default:other.claimed_by.username }}
+                        </a>
+                        <span class="badge-claim-{{ other.status }}">
+                            {{ other.get_status_display }}
+                        </span>
+                        <span class="text-muted">
+                            {{ other.created_at|date:"d M Y" }}
+                        </span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {% if claim.status == 'pending' %}
+                <form method="post">
+                    {% csrf_token %}
+
+                    <h5 class="detail-section-title">Your decision</h5>
+
+                    <div class="mb-3">
+                        <label for="remark" class="form-label">
+                            Remark
+                            <span class="text-muted">
+                                (required to reject)
+                            </span>
+                        </label>
+                        <textarea class="form-control" id="remark"
+                                  name="remark" rows="3"
+                                  placeholder="Why the claim is being turned down.">{{ remark }}</textarea>
+                    </div>
+
+                    <div class="decision-actions">
+                        <button class="btn btn-success" type="submit"
+                                name="decision" value="approve">
+                            Approve and hand it over
+                        </button>
+                        <button class="btn btn-outline-danger" type="submit"
+                                name="decision" value="reject">
+                            Reject the claim
+                        </button>
+                    </div>
+
+                    <p class="decision-note">
+                        Approving marks the item as claimed and closes
+                        every other claim on it. Both are told either way.
+                    </p>
+                </form>
+                {% else %}
+                <div class="decision-done">
+                    <p class="mb-1">
+                        <strong>
+                            This claim was
+                            {{ claim.get_status_display|lower }}
+                        </strong>
+                        {% if claim.reviewed_by %}
+                        by
+                        {{ claim.reviewed_by.first_name|default:claim.reviewed_by.username }}
+                        {% endif %}
+                    </p>
+                    {% if claim.remark %}
+                    <p class="mb-0 text-muted">{{ claim.remark }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock body %}

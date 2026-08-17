@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     "notifications.apps.NotificationsConfig",
     "profile_history.apps.ProfileHistoryConfig",
     "admin_panel.apps.AdminPanelConfig",
+    "report_lost_item.apps.ReportLostItemConfig",
+    "verify_claims.apps.VerifyClaimsConfig",
 ]
 
 MIDDLEWARE = [
@@ -82,6 +84,10 @@ TEMPLATES = [
                 # every template, so the bell in the navigation bar can
                 # show it on every page.
                 "notifications.context_processors.unread_notifications",
+                # Puts the number of claims waiting for a decision into
+                # every template, so a Security Officer sees from any
+                # page that there is work in the queue.
+                "verify_claims.context_processors.pending_claims",
             ],
         },
     },

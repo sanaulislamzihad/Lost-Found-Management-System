@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify claims - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="verify-header">
+    <div class="container">
+        <p class="verify-eyebrow">Security office</p>
+        <h2 class="verify-title">Verify claims</h2>
+        <p class="verify-lead">
+            {% if pending_count %}
+            {{ pending_count }} claim{{ pending_count|pluralize }} waiting
+            for a decision, the oldest first.
+            {% else %}
+            Nothing is waiting. The queue is clear.
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+<div class="container mt-4">
+
+    <!-- The SRS asks for the pending claims. The decided ones are one
+         tab away, so an officer can look back at what was done. -->
+    <div class="filter-tabs">
+        {% for value, label in statuses %}
+        <a class="filter-tab {% if status == value %}filter-tab-on{% endif %}"
+           href="{% url 'claim_queue' %}?status={{ value }}">
+            {{ label }}
+        </a>
+        {% endfor %}
+    </div>
+
+    {% for claim in claims %}
+    <a class="queue-card" href="{% url 'review_claim' claim.pk %}">
+        {% if claim.item.image %}
+        <img class="item-thumb" src="{{ claim.item.image.url }}"
+             alt="{{ claim.item.item_name }}">
+        {% else %}
+        <span class="item-thumb item-thumb-empty">No photo</span>
+        {% endif %}
+
+        <span class="queue-body">
+            <span class="queue-head">
+                <span class="item-card-title">{{ claim.item.item_name }}</span>
+                <span class="badge-claim-{{ claim.status }}">
+                    {{ claim.get_status_display }}
+                </span>
+            </span>
+
+            <span class="item-card-meta">
+                claimed by
+                {{ claim.claimed_by.first_name|default:claim.claimed_by.username }}
+                &middot; {{ claim.created_at|date:"d M Y, g:i a" }}
+                &middot; found at {{ claim.item.location }}
+            </span>
+
+            <span class="queue-proof">
+                &ldquo;{{ claim.proof|truncatewords:24 }}&rdquo;
+            </span>
+        </span>
+
+        <span class="item-card-arrow" aria-hidden="true">&rsaquo;</span>
+    </a>
+    {% empty %}
+    <div class="empty-state">
+        <p class="mb-1">
+            <strong>
+                {% if status == 'pending' %}
+                No claim is waiting
+                {% else %}
+                No {{ status }} claim yet
+                {% endif %}
+            </strong>
+        </p>
+        <p class="text-muted mb-0">
+            A claim shows up here as soon as somebody says a found item
+            is theirs.
+        </p>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock body %}
