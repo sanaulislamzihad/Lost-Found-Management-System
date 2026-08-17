@@ -1,0 +1,123 @@
+{% extends 'manage_base.html' %}
+
+{% block title %}Users - Manage - Lost &amp; Found{% endblock title %}
+
+{% block manage_title %}Users{% endblock %}
+
+{% block manage_body %}
+
+<form class="filter-card mb-4" method="get" action="{% url 'manage_users' %}">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label" for="query">Search</label>
+            <input type="text" class="form-control" id="query" name="query"
+                   value="{{ query }}" placeholder="Name or email">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" for="role">Role</label>
+            <select class="form-select" id="role" name="role">
+                <option value="">All roles</option>
+                {% for value, label in roles %}
+                <option value="{{ value }}"
+                        {% if role == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <div class="filter-actions">
+                <button class="btn btn-primary" type="submit">Apply</button>
+                {% if query or role %}
+                <a class="btn btn-link px-1" href="{% url 'manage_users' %}">
+                    Clear
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="table-card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>University ID</th>
+                <th>Role</th>
+                <th>Account</th>
+                <th class="text-end">Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for member in users %}
+            <tr>
+                <td>
+                    <strong>{{ member.first_name|default:member.username }}</strong>
+                    <span class="cell-note">{{ member.email }}</span>
+                </td>
+                <td class="text-muted">
+                    {{ member.profile.university_id|default:"&mdash;" }}
+                </td>
+
+                <!-- Feature 10: the role is changed straight from the
+                     row, one small form per member. -->
+                <td>
+                    <form class="row-form" method="post"
+                          action="{% url 'manage_user_role' member.pk %}">
+                        {% csrf_token %}
+                        <select class="form-select form-select-sm"
+                                name="role" aria-label="Role">
+                            {% for value, label in roles %}
+                            <option value="{{ value }}"
+                                    {% if member.profile.role == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <button class="btn btn-outline-dark btn-sm"
+                                type="submit">Set</button>
+                    </form>
+                </td>
+
+                <td>
+                    <form class="row-form" method="post"
+                          action="{% url 'manage_user_active' member.pk %}">
+                        {% csrf_token %}
+                        {% if member.is_active %}
+                        <span class="badge-account-on">Active</span>
+                        {% if member != user %}
+                        <button class="btn btn-outline-dark btn-sm"
+                                type="submit">Switch off</button>
+                        {% endif %}
+                        {% else %}
+                        <span class="badge-account-off">Switched off</span>
+                        <button class="btn btn-outline-dark btn-sm"
+                                type="submit">Switch on</button>
+                        {% endif %}
+                    </form>
+                </td>
+
+                <td class="text-end">
+                    {% if member == user %}
+                    <span class="cell-note">This is you</span>
+                    {% else %}
+                    <a class="btn btn-outline-danger btn-sm"
+                       href="{% url 'manage_user_delete' member.pk %}">
+                        Delete
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="table-empty">
+                    No member matches that.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock manage_body %}

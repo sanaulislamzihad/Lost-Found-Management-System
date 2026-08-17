@@ -1,0 +1,84 @@
+{% extends 'manage_base.html' %}
+
+{% block title %}Categories - Manage - Lost &amp; Found{% endblock title %}
+
+{% block manage_title %}Categories{% endblock %}
+
+{% block manage_body %}
+
+<div class="row">
+    <div class="col-lg-5">
+        <form class="form-card" method="post"
+              action="{% url 'manage_categories' %}">
+            {% csrf_token %}
+            <h5>Add a category</h5>
+            <p class="form-lead">
+                Categories are what the search filters and the matching
+                notifications are built on.
+            </p>
+
+            <div class="mb-3">
+                <label class="form-label" for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name"
+                       placeholder="Keys, Clothing, Sports gear..." required>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Add it</button>
+        </form>
+    </div>
+
+    <div class="col-lg-7 mt-4 mt-lg-0">
+        <div class="table-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Posts</th>
+                        <th class="text-end">Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for category in categories %}
+                    <tr>
+                        <!-- Feature 10: renaming happens in the row
+                             itself, so there is no page to open. -->
+                        <td>
+                            <form class="row-form" method="post"
+                                  action="{% url 'manage_category_rename' category.pk %}">
+                                {% csrf_token %}
+                                <input type="text"
+                                       class="form-control form-control-sm"
+                                       name="name" value="{{ category.name }}"
+                                       aria-label="Category name" required>
+                                <button class="btn btn-outline-dark btn-sm"
+                                        type="submit">Rename</button>
+                            </form>
+                        </td>
+                        <td class="text-muted">{{ category.item_count }}</td>
+                        <td class="text-end">
+                            {% if category.item_count %}
+                            <span class="cell-note">In use</span>
+                            {% else %}
+                            <form method="post"
+                                  action="{% url 'manage_category_delete' category.pk %}">
+                                {% csrf_token %}
+                                <button class="btn btn-outline-danger btn-sm"
+                                        type="submit">Remove</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="table-empty">
+                            There are no categories yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock manage_body %}

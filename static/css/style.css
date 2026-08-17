@@ -1144,7 +1144,367 @@ h1, h2, h3, h4, h5 {
 }
 
 /* ---------------------------------------------------------------
-   12. Small screens.
+   12. Profile and history (Feature 9).
+   --------------------------------------------------------------- */
+
+.profile-top {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-photo {
+    flex: 0 0 auto;
+    width: 84px;
+    height: 84px;
+    border: 3px solid var(--surface);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--border);
+    object-fit: cover;
+}
+
+/* No photo yet, so the first letter of the name stands in for one. */
+.profile-photo-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--navy);
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.profile-name {
+    margin-bottom: 0.4rem;
+    color: var(--navy-dark);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.profile-joined {
+    margin: 0.4rem 0 0;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+}
+
+/* A locked box still has to be readable, and Bootstrap greys a
+   disabled input almost to nothing. */
+.form-control:disabled {
+    background-color: var(--page-bg);
+    color: var(--ink-muted);
+}
+
+.badge-role-student,
+.badge-role-staff,
+.badge-role-officer,
+.badge-role-admin {
+    display: inline-block;
+    padding: 0.32em 0.7em;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.badge-role-student {
+    background-color: #dde7f6;
+    color: var(--navy);
+}
+
+.badge-role-staff {
+    background-color: #e2e3e5;
+    color: #495057;
+}
+
+.badge-role-officer {
+    background-color: #dcefe4;
+    color: #14573a;
+}
+
+.badge-role-admin {
+    background-color: #f5e8cd;
+    color: #6b5115;
+}
+
+.history-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.85rem;
+}
+
+.history-count {
+    padding: 0.1em 0.6em;
+    border-radius: 999px;
+    background-color: var(--page-bg);
+    border: 1px solid var(--border);
+    color: var(--ink-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* The status tabs. Plain links, so the back button and a bookmark
+   both keep working. */
+.filter-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.25rem;
+}
+
+.filter-tab {
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background-color: var(--surface);
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.filter-tab:hover {
+    border-color: var(--border-strong);
+    color: var(--navy);
+}
+
+.filter-tab-on {
+    border-color: var(--navy);
+    background-color: var(--navy);
+    color: #fff;
+}
+
+.filter-tab-on:hover {
+    color: #fff;
+}
+
+.history-table-wrap {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+/* ---------------------------------------------------------------
+   13. The management pages (Feature 10).
+   --------------------------------------------------------------- */
+
+.manage-header {
+    padding: 1.75rem 0 0;
+    background-color: var(--navy);
+    background-image: linear-gradient(135deg, var(--navy) 0%,
+                                      var(--navy-soft) 100%);
+    color: #fff;
+}
+
+.manage-eyebrow {
+    margin-bottom: 0.15rem;
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.manage-title {
+    margin-bottom: 1.25rem;
+    color: #fff;
+}
+
+.manage-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.manage-tab {
+    padding: 0.6rem 1rem;
+    border-bottom: 3px solid transparent;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.92rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.manage-tab:hover {
+    color: #fff;
+}
+
+.manage-tab-on {
+    border-bottom-color: var(--gold);
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Export sits away from the four tabs, because it does something
+   rather than going somewhere. */
+.manage-tab-side {
+    margin-left: auto;
+    padding: 0.35rem 0.9rem;
+    margin-bottom: 0.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 0.4rem;
+}
+
+.manage-tab-side:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* The statistics of the whole system. auto-fit means the tiles
+   rearrange themselves instead of needing a breakpoint each. */
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+}
+
+.metric-card {
+    padding: 1.35rem 1.25rem;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--navy);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+}
+
+.metric-card-good {
+    border-left-color: #2f7d55;
+}
+
+.metric-number {
+    display: block;
+    color: var(--navy-dark);
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.metric-label {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--ink-muted);
+    font-size: 0.85rem;
+}
+
+/* overflow-x keeps a wide table inside its own card on a phone
+   instead of making the whole page slide sideways. */
+.table-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background-color: var(--page-bg);
+    color: var(--ink-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.data-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.data-table tbody tr:hover {
+    background-color: #fafbfd;
+}
+
+.data-table a {
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.data-table a:hover {
+    text-decoration: underline;
+}
+
+.cell-note {
+    display: block;
+    margin-top: 0.15rem;
+    color: var(--ink-muted);
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+.table-empty {
+    padding: 2.5rem 1rem;
+    color: var(--ink-muted);
+    text-align: center;
+}
+
+/* A small form living inside one cell of a table. */
+.row-form {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.row-form .form-select,
+.row-form .form-control {
+    width: auto;
+    min-width: 8rem;
+}
+
+.row-actions {
+    display: inline-flex;
+    gap: 0.4rem;
+}
+
+.badge-account-on,
+.badge-account-off {
+    padding: 0.28em 0.65em;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.badge-account-on {
+    background-color: #dcefe4;
+    color: #14573a;
+}
+
+.badge-account-off {
+    background-color: #e7e9ec;
+    color: #495057;
+}
+
+.confirm-list {
+    margin: 0.6rem 0 0;
+    padding-left: 1.1rem;
+    color: var(--ink-muted);
+    font-size: 0.875rem;
+}
+
+/* ---------------------------------------------------------------
+   14. Small screens.
    --------------------------------------------------------------- */
 
 @media (max-width: 575.98px) {
@@ -1192,6 +1552,24 @@ h1, h2, h3, h4, h5 {
     .email-copy-card,
     .email-copy-side {
         align-items: flex-start;
+    }
+
+    .profile-top {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    /* The row forms of the management tables stack, because a select
+       and a button side by side do not fit a phone. */
+    .row-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .row-form .form-select,
+    .row-form .form-control {
+        width: 100%;
     }
 }
 

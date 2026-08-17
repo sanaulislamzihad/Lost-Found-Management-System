@@ -406,6 +406,17 @@ class Profile(models.Model):
         """
         return self.role == 'officer'
 
+    def is_admin(self):
+        """Tell whether this user may manage the whole platform.
+
+        Feature 10 checks this before opening any of the management
+        pages, so the rule is written once here.
+
+        :return: True for an Admin.
+        :rtype: bool.
+        """
+        return self.role == 'admin'
+
     def is_locked(self):
         """This method tells whether the account is still shut because
         of too many wrong logins.

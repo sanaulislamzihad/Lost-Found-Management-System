@@ -1,0 +1,112 @@
+{% extends 'manage_base.html' %}
+
+{% block title %}Posts - Manage - Lost &amp; Found{% endblock title %}
+
+{% block manage_title %}Posts{% endblock %}
+
+{% block manage_body %}
+
+<form class="filter-card mb-4" method="get" action="{% url 'manage_posts' %}">
+    <div class="row g-3">
+        <div class="col-md-5">
+            <label class="form-label" for="query">Search</label>
+            <input type="text" class="form-control" id="query" name="query"
+                   value="{{ query }}" placeholder="Item name">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" for="type">Type</label>
+            <select class="form-select" id="type" name="type">
+                <option value="">All</option>
+                {% for value, label in item_types %}
+                <option value="{{ value }}"
+                        {% if type == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" for="status">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="">All</option>
+                {% for value, label in statuses %}
+                <option value="{{ value }}"
+                        {% if status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <div class="filter-actions">
+                <button class="btn btn-primary" type="submit">Apply</button>
+                {% if query or type or status %}
+                <a class="btn btn-link px-1" href="{% url 'manage_posts' %}">
+                    Clear
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="table-card">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Posted by</th>
+                <th>Claims</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>
+                    <a href="{% url 'item_detail' item.pk %}">
+                        {{ item.item_name }}
+                    </a>
+                    <span class="cell-note">
+                        {{ item.category.name }} &middot; {{ item.location }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge-type-{{ item.item_type }}">
+                        {{ item.get_item_type_display }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge-status-{{ item.status }}">
+                        {{ item.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    {{ item.posted_by.first_name|default:item.posted_by.username }}
+                </td>
+                <td class="text-muted">{{ item.claim_count }}</td>
+                <td class="text-end">
+                    <div class="row-actions">
+                        <a class="btn btn-outline-dark btn-sm"
+                           href="{% url 'manage_post_edit' item.pk %}">Edit</a>
+                        <a class="btn btn-outline-danger btn-sm"
+                           href="{% url 'manage_post_delete' item.pk %}">
+                            Remove
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="table-empty">
+                    No post matches that.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock manage_body %}

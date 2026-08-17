@@ -1,0 +1,45 @@
+{% extends 'manage_base.html' %}
+
+{% block title %}Delete a member - Manage - Lost &amp; Found{% endblock title %}
+
+{% block manage_title %}Delete a member{% endblock %}
+
+{% block manage_body %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="form-card">
+            <h3>Delete this member?</h3>
+            <p class="form-lead">
+                Everything that belongs to them goes as well, and none of
+                it can be brought back. Switching the account off instead
+                keeps the posts and stops the person logging in.
+            </p>
+
+            <div class="confirm-box">
+                <strong>{{ member.first_name|default:member.username }}</strong><br>
+                <span class="text-muted">
+                    {{ member.email }}
+                    &middot; {{ member.profile.get_role_display }}
+                </span>
+                <ul class="confirm-list">
+                    <li>{{ item_count }} post{{ item_count|pluralize }}</li>
+                    <li>{{ claim_count }} claim{{ claim_count|pluralize }}</li>
+                </ul>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button class="btn btn-danger" type="submit">
+                        Yes, delete the member
+                    </button>
+                    <a class="btn btn-outline-dark"
+                       href="{% url 'manage_users' %}">Keep them</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock manage_body %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% comment %}
+Every management page of Feature 10 carries the same heading and the
+same row of tabs, so they are written once here and each page fills in
+{% block manage_body %} only.
+{% endcomment %}
+
+{% block body %}
+
+<div class="manage-header">
+    <div class="container">
+        <p class="manage-eyebrow">Admin</p>
+        <h2 class="manage-title">{% block manage_title %}Manage{% endblock %}</h2>
+
+        <nav class="manage-tabs">
+            <a class="manage-tab {% if request.resolver_match.url_name == 'manage_dashboard' %}manage-tab-on{% endif %}"
+               href="{% url 'manage_dashboard' %}">Overview</a>
+            <a class="manage-tab {% if request.resolver_match.url_name == 'manage_users' %}manage-tab-on{% endif %}"
+               href="{% url 'manage_users' %}">Users</a>
+            <a class="manage-tab {% if request.resolver_match.url_name == 'manage_posts' %}manage-tab-on{% endif %}"
+               href="{% url 'manage_posts' %}">Posts</a>
+            <a class="manage-tab {% if request.resolver_match.url_name == 'manage_categories' %}manage-tab-on{% endif %}"
+               href="{% url 'manage_categories' %}">Categories</a>
+            <a class="manage-tab manage-tab-side"
+               href="{% url 'manage_report' %}">Export CSV</a>
+        </nav>
+    </div>
+</div>
+
+<div class="container mt-4">
+    {% block manage_body %}{% endblock manage_body %}
+</div>
+
+{% endblock body %}

@@ -1,0 +1,49 @@
+{% extends 'manage_base.html' %}
+
+{% block title %}Remove a post - Manage - Lost &amp; Found{% endblock title %}
+
+{% block manage_title %}Remove a post{% endblock %}
+
+{% block manage_body %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="form-card">
+            <h3>Remove this post?</h3>
+            <p class="form-lead">
+                The post goes for good, together with every claim made on
+                it. This cannot be undone.
+            </p>
+
+            <div class="confirm-box">
+                <strong>{{ item.item_name }}</strong><br>
+                <span class="text-muted">
+                    {{ item.get_item_type_display }}
+                    &middot; {{ item.category.name }}
+                    &middot; {{ item.location }}
+                    &middot; {{ item.date|date:"d M Y" }}
+                </span>
+                <ul class="confirm-list">
+                    <li>
+                        posted by
+                        {{ item.posted_by.first_name|default:item.posted_by.username }}
+                    </li>
+                    <li>{{ claim_count }} claim{{ claim_count|pluralize }}</li>
+                </ul>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <button class="btn btn-danger" type="submit">
+                        Yes, remove the post
+                    </button>
+                    <a class="btn btn-outline-dark"
+                       href="{% url 'manage_posts' %}">Keep it</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock manage_body %}
