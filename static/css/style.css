@@ -324,13 +324,56 @@ h1, h2, h3, h4, h5 {
    4. The home page.
    --------------------------------------------------------------- */
 
+/* The campus photo fills the band and the words sit on top of it. The
+   photo cannot go on .hero itself, because a filter on an element
+   blurs everything inside it as well, so it goes on ::before behind
+   the text and the navy wash goes on ::after between the two. */
+/* Tall enough that a good part of the building fits inside the band.
+   A short band would crop the photo down to a strip of windows that
+   nobody could recognise. */
 .hero {
-    padding: 3.5rem 0 3rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 30rem;
+    padding: 3.5rem 0;
+    /* Still painted, so the band is navy while the photo loads and on
+       any browser that will not show it. */
     background-color: var(--navy);
-    /* A quiet slant of a lighter navy, so the band is not one flat
-       block of colour behind the words. */
-    background-image: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
     color: #fff;
+}
+
+/* The photo is already blurred in the file itself, at its own size.
+   Blurring it here instead would mean blurring a picture the browser
+   had just stretched, which is what made it look torn. */
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('../img/campus.webp');
+    background-position: center 45%;
+    background-size: cover;
+}
+
+/* The wash is what makes white text readable on a bright photo. It is
+   heaviest on the left, where the words are, and thins out to the
+   right so the campus is actually visible. */
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(100deg,
+                      rgba(11, 31, 61, 0.90) 0%,
+                      rgba(15, 40, 75, 0.72) 40%,
+                      rgba(28, 67, 128, 0.42) 100%);
+}
+
+/* Lifts the words above both layers. */
+.hero > .container {
+    position: relative;
+    z-index: 1;
 }
 
 .hero-eyebrow {
