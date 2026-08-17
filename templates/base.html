@@ -86,6 +86,14 @@
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <a class="dropdown-item"
+                               href="{% url 'my_profile' %}">My profile</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="{% url 'my_history' %}">My history</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
                                href="{% url 'my_claims' %}">My claims</a>
                         </li>
                         <li>
@@ -94,6 +102,19 @@
                                 Notifications
                             </a>
                         </li>
+
+                        <!-- Feature 10: only an Admin is shown the way
+                             in to the management pages. -->
+                        {% if user.profile.is_admin or user.is_superuser %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item"
+                               href="{% url 'manage_dashboard' %}">
+                                Manage the platform
+                            </a>
+                        </li>
+                        {% endif %}
+
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item"

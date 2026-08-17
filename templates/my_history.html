@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}My history - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+
+    <div class="page-head">
+        <div>
+            <h2>My history</h2>
+            <p>Everything you have posted and everything you have claimed.</p>
+        </div>
+        <a class="btn btn-outline-dark" href="{% url 'my_profile' %}">
+            My profile
+        </a>
+    </div>
+
+    <h5 class="history-heading">
+        My posts <span class="history-count">{{ total_posted }}</span>
+    </h5>
+
+    <!-- Feature 9: the four statuses of the SRS, as tabs. Each one is
+         a plain link, so the browser back button works and a filtered
+         list can be bookmarked. -->
+    <div class="filter-tabs">
+        <a class="filter-tab {% if not status %}filter-tab-on{% endif %}"
+           href="{% url 'my_history' %}">All</a>
+        {% for value, label in statuses %}
+        <a class="filter-tab {% if status == value %}filter-tab-on{% endif %}"
+           href="{% url 'my_history' %}?status={{ value }}">{{ label }}</a>
+        {% endfor %}
+    </div>
+
+    {% for item in items %}
+    <a class="item-card" href="{% url 'item_detail' item.pk %}">
+        {% if item.image %}
+        <img class="item-thumb" src="{{ item.image.url }}"
+             alt="{{ item.item_name }}">
+        {% else %}
+        <span class="item-thumb item-thumb-empty">No photo</span>
+        {% endif %}
+
+        <span class="item-card-body">
+            <span class="item-card-head">
+                <span class="item-card-title">{{ item.item_name }}</span>
+                <span class="badge-status-{{ item.status }}">
+                    {{ item.get_status_display }}
+                </span>
+            </span>
+            <span class="item-card-meta">
+                <span class="badge-type-{{ item.item_type }}">
+                    {{ item.get_item_type_display }}
+                </span>
+                {{ item.category.name }}
+                &middot; {{ item.location }}
+                &middot; {{ item.date|date:"d M Y" }}
+            </span>
+        </span>
+
+        <span class="item-card-arrow" aria-hidden="true">&rsaquo;</span>
+    </a>
+    {% empty %}
+    <div class="empty-state">
+        <p class="mb-1">
+            <strong>
+                {% if status %}
+                Nothing of yours is {{ status }}
+                {% else %}
+                You have not posted anything yet
+                {% endif %}
+            </strong>
+        </p>
+        <p class="text-muted mb-3">
+            Report what you found and it will show up here.
+        </p>
+        <a class="btn btn-outline-dark btn-sm"
+           href="{% url 'report_found_item' %}">
+            Report a found item
+        </a>
+    </div>
+    {% endfor %}
+
+    <h5 class="history-heading mt-5">
+        My claims <span class="history-count">{{ claims|length }}</span>
+    </h5>
+
+    {% if claims %}
+    <div class="history-table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Claimed on</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for claim in claims %}
+                <tr>
+                    <td>
+                        <a href="{% url 'item_detail' claim.item.pk %}">
+                            {{ claim.item.item_name }}
+                        </a>
+                    </td>
+                    <td class="text-muted">
+                        {{ claim.created_at|date:"d M Y" }}
+                    </td>
+                    <td>
+                        <span class="badge-claim-{{ claim.status }}">
+                            {{ claim.get_status_display }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="mt-2 mb-0">
+        <a href="{% url 'my_claims' %}">
+            See the proof you gave on each one &rsaquo;
+        </a>
+    </p>
+    {% else %}
+    <div class="empty-state">
+        <p class="mb-1"><strong>You have not claimed anything yet</strong></p>
+        <p class="text-muted mb-0">
+            When you find your item in the posts, press
+            &ldquo;This is mine&rdquo; on it.
+        </p>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock body %}

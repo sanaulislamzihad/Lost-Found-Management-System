@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     "search_items.apps.SearchItemsConfig",
     "claim_item.apps.ClaimItemConfig",
     "notifications.apps.NotificationsConfig",
+    "profile_history.apps.ProfileHistoryConfig",
+    "admin_panel.apps.AdminPanelConfig",
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,108 @@
+{% extends 'manage_base.html' %}
+
+{% block title %}Edit a post - Manage - Lost &amp; Found{% endblock title %}
+
+{% block manage_title %}Edit a post{% endblock %}
+
+{% block manage_body %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="form-card">
+            <h3 class="mb-1">{{ item.item_name }}</h3>
+            <p class="form-lead">
+                Posted by
+                {{ item.posted_by.first_name|default:item.posted_by.username }}
+                on {{ item.created_at|date:"d F Y" }}.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label" for="item_name">Item name</label>
+                    <input type="text" class="form-control" id="item_name"
+                           name="item_name" value="{{ form.item_name }}"
+                           required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="item_type">Type</label>
+                        <select class="form-select" id="item_type"
+                                name="item_type" required>
+                            {% for value, label in item_types %}
+                            <option value="{{ value }}"
+                                    {% if form.item_type == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="status">Status</label>
+                        <select class="form-select" id="status" name="status"
+                                required>
+                            {% for value, label in statuses %}
+                            <option value="{{ value }}"
+                                    {% if form.status == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="category">Category</label>
+                    <select class="form-select" id="category" name="category"
+                            required>
+                        <option value="">Choose a category</option>
+                        {% for category in categories %}
+                        <option value="{{ category.pk }}"
+                                {% if form.category|stringformat:"s" == category.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="description">
+                        Description
+                    </label>
+                    <textarea class="form-control" id="description"
+                              name="description" rows="4"
+                              required>{{ form.description }}</textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-7 mb-3">
+                        <label class="form-label" for="location">Place</label>
+                        <input type="text" class="form-control" id="location"
+                               name="location" value="{{ form.location }}"
+                               required>
+                    </div>
+
+                    <div class="col-md-5 mb-3">
+                        <label class="form-label" for="date">Date</label>
+                        <input type="date" class="form-control" id="date"
+                               name="date" value="{{ form.date }}" required>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">
+                        Save changes
+                    </button>
+                    <a class="btn btn-link" href="{% url 'manage_posts' %}">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock manage_body %}

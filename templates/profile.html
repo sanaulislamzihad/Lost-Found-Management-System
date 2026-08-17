@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}My profile - Lost &amp; Found{% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="page-head">
+                <div>
+                    <h2>My profile</h2>
+                    <p>Keep your details correct so people can reach you.</p>
+                </div>
+                <a class="btn btn-outline-dark" href="{% url 'my_history' %}">
+                    My history
+                </a>
+            </div>
+
+            <form class="form-card" method="post"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="profile-top">
+                    {% if profile.photo %}
+                    <img class="profile-photo" src="{{ profile.photo.url }}"
+                         alt="{{ user.first_name }}">
+                    {% else %}
+                    <span class="profile-photo profile-photo-empty">
+                        {{ user.first_name|slice:":1"|upper|default:"?" }}
+                    </span>
+                    {% endif %}
+
+                    <div class="profile-top-body">
+                        <p class="profile-name">
+                            {{ user.first_name|default:user.username }}
+                        </p>
+                        <span class="badge-role-{{ profile.role }}">
+                            {{ profile.get_role_display }}
+                        </span>
+                        <p class="profile-joined">
+                            Member since {{ user.date_joined|date:"F Y" }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 9: the SRS locks these two after
+                     registration, so they are shown but never read
+                     back from the form. -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" class="form-control" id="email"
+                               value="{{ user.email }}" disabled>
+                        <div class="form-text">
+                            This cannot be changed after registration.
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" for="university_id">
+                            University / employee ID
+                        </label>
+                        <input type="text" class="form-control"
+                               id="university_id"
+                               value="{{ profile.university_id }}" disabled>
+                        <div class="form-text">
+                            This cannot be changed after registration.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="full_name">Full name</label>
+                    <input type="text" class="form-control" id="full_name"
+                           name="full_name" value="{{ user.first_name }}"
+                           required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="phone_number">
+                        Phone number
+                    </label>
+                    <input type="text" class="form-control" id="phone_number"
+                           name="phone_number"
+                           value="{{ profile.phone_number }}"
+                           placeholder="01712345678">
+                    <div class="form-text">
+                        Leave it empty if you would rather not give one.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="photo">
+                        Profile photo <span class="text-muted">(optional)</span>
+                    </label>
+                    <input type="file" class="form-control" id="photo"
+                           name="photo" accept="image/*">
+                    <div class="form-text">
+                        A picture under 2 MB.
+                        {% if profile.photo %}
+                        Choosing a new one replaces the old one.
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">
+                        Save changes
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
