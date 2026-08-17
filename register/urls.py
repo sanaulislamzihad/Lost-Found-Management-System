@@ -1,4 +1,6 @@
-"""URL patterns of the register app."""
+"""
+This module is used to hold the URL patterns of the register app.
+"""
 
 from django.urls import path
 
