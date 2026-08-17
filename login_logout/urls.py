@@ -1,4 +1,6 @@
-"""URL patterns of the login_logout app."""
+"""
+This module is used to hold the URL patterns of the login_logout app.
+"""
 
 from django.urls import path
 
