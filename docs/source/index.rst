@@ -22,4 +22,5 @@ documentation for details.
    installation
    testing
    team
+   api
 
